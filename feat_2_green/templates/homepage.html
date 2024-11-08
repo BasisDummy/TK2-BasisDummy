@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .hover-effect:hover {
+        background-color: rgba(200, 204, 125, 0.1); /* Ganti dengan warna rgba yang diinginkan */
+    }
+</style>
+    <title>Homepage - Kategori Jasa</title>
+
+    <div class="mt-16" style=" background-color: rgba(150, 155, 74, 0.2); min-height: 80vh; padding: 20px; text-align: center;">
+        <div class="container mx-auto mt-10 p-6 bg-[white] shadow-lg rounded-lg">
+        <!-- Filter Section -->
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <select id="kategoriFilter" class="w-full md:w-1/3 p-2 border border-gray-300 rounded-md">
+                <option value="">Pilih Kategori</option>
+                <option value="Kategori Jasa 1">Kategori Jasa 1</option>
+                <option value="Kategori Jasa 2">Kategori Jasa 2</option>
+                <option value="Kategori Jasa 3">Kategori Jasa 3</option>
+            </select>
+            <input type="text" id="subkategoriFilter" placeholder="Nama Subkategori" 
+                class="w-full md:w-1/3 p-2 border border-gray-300 rounded-md" />
+            <button onclick="applyFilter()" class="w-full md:w-auto px-6 py-3 bg-[#969b4a] text-white rounded-md hover:bg-[#646733]">Cari</button>
+        </div>
+
+        <!-- Category and Subcategory List -->
+        <div id="categoryList">
+            <!-- Category 1 -->
+            <div class="category border border-[#c8cc7d] rounded-lg mb-6 p-4" data-kategori="Kategori Jasa 1">
+                <div class="bg-[#C8CC7D] text-lg font-semibold p-3 rounded-md ">Kategori Jasa 1</div>
+                <div class="subcategory">
+                    <a href="{% url 'feat_2_green:subkategori' %}?id=1-1" class="block p-3 border-t border-gray-200 hover-effect">Subkategori Jasa 1-1</a>
+                    <a href="{% url 'feat_2_green:subkategori' %}?id=1-2" class="block p-3 border-t border-gray-200 hover-effect">Subkategori Jasa 1-2</a>
+                    <a href="{% url 'feat_2_green:subkategori' %}?id=1-3" class="block p-3 border-t border-gray-200 hover-effect">Subkategori Jasa 1-3</a>
+                </div>
+            </div>
+
+            <!-- Category 2 -->
+            <div class="category border border-[#c8cc7d] rounded-lg mb-6 p-4" data-kategori="Kategori Jasa 2">
+                <div class="bg-[#C8CC7D] text-lg font-semibold p-3 rounded-md">Kategori Jasa 2</div>
+                <div class="subcategory">
+                    <a href="{% url 'feat_2_green:subkategori' %}?id=2-1" class="block p-3 border-t border-gray-200 hover-effect">Subkategori Jasa 2-1</a>
+                    <a href="{% url 'feat_2_green:subkategori' %}?id=2-2" class="block p-3 border-t border-gray-200 hover-effect">Subkategori Jasa 2-2</a>
+                    <a href="{% url 'feat_2_green:subkategori' %}?id=2-3" class="block p-3 border-t border-gray-200 hover-effect">Subkategori Jasa 2-3</a>
+                </div>
+            </div>
+
+            <!-- Category 3 -->
+            <div class="category border border-[#c8cc7d] rounded-lg mb-6 p-4" data-kategori="Kategori Jasa 3">
+                <div class="bg-[#C8CC7D] text-lg font-semibold p-3 rounded-md">Kategori Jasa 3</div>
+                <div class="subcategory">
+                    <a href="{% url 'feat_2_green:subkategori' %}?id=3-1" class="block p-3 border-t border-gray-200 hover-effect">Subkategori Jasa 3-1</a>
+                    <a href="{% url 'feat_2_green:subkategori' %}?id=3-2" class="block p-3 border-t border-gray-200 hover-effect">Subkategori Jasa 3-2</a>
+                    <a href="{% url 'feat_2_green:subkategori' %}?id=3-3" class="block p-3 border-t border-gray-200 hover-effect">Subkategori Jasa 3-3</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function applyFilter() {
+            // Ambil nilai filter
+            const selectedCategory = document.getElementById('kategoriFilter').value.toLowerCase();
+            const subcategoryQuery = document.getElementById('subkategoriFilter').value.toLowerCase();
+            
+            // Dapatkan semua kategori
+            const categories = document.querySelectorAll('.category');
+
+            categories.forEach(category => {
+                const categoryTitle = category.getAttribute('data-kategori').toLowerCase();
+
+                // Filter berdasarkan kategori
+                if (selectedCategory && categoryTitle !== selectedCategory) {
+                    category.style.display = 'none';  // Hide category if it doesn't match
+                    return; // Skip to the next category if it doesn't match
+                } else {
+                    category.style.display = 'block'; // Show category if it matches or no category selected
+                }
+
+                // Dapatkan semua subkategori dalam kategori
+                const subcategories = category.querySelectorAll('.subcategory a');
+                let hasVisibleSubcategory = false; // Track if there's any visible subcategory
+
+                subcategories.forEach(subcategory => {
+                    const subcategoryText = subcategory.innerText.toLowerCase();
+
+                    // Filter berdasarkan subkategori
+                    if (subcategoryText.includes(subcategoryQuery)) {
+                        subcategory.style.display = 'block'; // Show matching subcategory
+                        hasVisibleSubcategory = true; // Mark as having a visible subcategory
+                    } else {
+                        subcategory.style.display = 'none'; // Hide non-matching subcategory
+                    }
+                });
+
+                // Sembunyikan kategori jika tidak ada subkategori yang sesuai
+                if (!hasVisibleSubcategory) {
+                    category.style.display = 'none'; // Hide category if no subcategory matches
+                }
+            });
+        }
+    </script>
+</div>
+
+{% endblock content %}

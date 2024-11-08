@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="mt-16" style="min-height: 80vh; padding: 20px;">
+<body class="bg-white text-gray-800 p-6">
+    <h2 class="text-2xl font-bold mb-4">Detail Subkategori Jasa</h2>
+
+    <div class="mb-2 font-semibold">Kategori: {{ subcategory.category }}</div>
+    <div class="mb-4 font-semibold">Nama Subkategori: {{ subcategory.name }}</div>
+    
+    <div class="description-box border border-gray-300 p-4 rounded-lg mb-4 bg-white">
+        <p>{{ subcategory.description }}</p>
+    </div>
+
+    <div class="session-box border border-gray-300 p-4 rounded-lg mb-4 bg-white">
+        <h3 class="text-xl font-bold mb-3">Pilihan Sesi Layanan</h3>
+        {% for session in subcategory.sessions %}
+            <div class="session flex justify-between mb-2">
+                <span>{{ session.name }}</span>
+                <span>{{ session.price }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="worker-box border border-gray-300 p-4 rounded-lg mb-4 bg-white">
+        <h3 class="text-xl font-bold mb-3">Pekerja</h3>
+        <div class="workers">
+            {% for worker in subcategory.workers %}
+                <div class="worker mb-2">{{ worker.name }}</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <button id="joinButton" class="btn-order px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none mb-4 items-center">Bergabung untuk Bekerja</button>
+
+    <div class="testimonial-box border border-gray-300 p-4 rounded-lg bg-white mb-6">
+        <h3 class="text-xl font-bold mb-3">Testimoni</h3>
+        {% for testimonial in subcategory.testimonials %}
+            <div class="testimonial mb-4">
+                <p><strong>{{ testimonial.user }}</strong> - {{ testimonial.date }}</p>
+                <p>{{ testimonial.text }}</p>
+                <p>Pekerja: {{ testimonial.worker }} | Rating: {{ testimonial.rating }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'feat_2_green:homepage' %}" class="text-blue-500 hover:text-blue-600">Kembali ke Homepage</a>
+
+    <script>
+        const isWorkerJoined = false; // Ganti nilai ini sesuai dengan kondisi login atau data server
+        const joinButton = document.getElementById("joinButton");
+
+        if (isWorkerJoined) {
+            joinButton.classList.add("hidden");
+        }
+
+        joinButton.addEventListener("click", function() {
+            alert("Anda telah bergabung dalam kategori jasa ini!");
+            joinButton.classList.add("hidden");
+        });
+    </script>
+</body>
+</div>
+{% endblock content %}

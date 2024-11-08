@@ -1,0 +1,79 @@
+<div id="order-form" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+    <h2 class="text-xl font-bold mb-4 text-center">Pesan Jasa</h2>
+
+    <!-- Tanggal Pemesanan -->
+    <div class="mb-4">
+        <label class="block text-gray-700">Tanggal Pemesanan:</label>
+        <input id="order-date" type="text" readonly class="w-full p-2 border rounded-md bg-gray-100">
+    </div>
+
+    <!-- Kode Diskon -->
+    <div class="mb-4">
+        <label class="block text-gray-700">Diskon:</label>
+        <input id="discount-code" type="text" placeholder="Kode Diskon" class="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300">
+    </div>
+
+    <!-- Total Pembayaran -->
+    <div class="mb-4">
+        <label class="block text-gray-700">Total Pembayaran:</label>
+        <p id="total-payment" class="text-lg font-semibold">Rp 0,00</p>
+    </div>
+
+    <!-- Metode Pembayaran -->
+    <div class="mb-4">
+        <label class="block text-gray-700">Metode Pembayaran:</label>
+        <select id="payment-method" class="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300">
+            <option>Pilih Metode</option>
+            <option>Transfer Bank</option>
+            <option>Gopay</option>
+            <option>OVO</option>
+        </select>
+    </div>
+
+    <!-- Tombol Pesan Jasa -->
+    <button id="submit-order" class="w-full py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition">Pesan Jasa</button>
+</div>
+
+<script>
+    // Data total pembayaran (misalnya dari database)
+    const initialTotalPayment = 150000; // Rp 150.000,00
+    const discountCodes = {
+        "DISKON10": 0.1,  // 10% diskon
+        "DISKON20": 0.2,  // 20% diskon
+    };
+
+    // Mengisi tanggal pemesanan dengan tanggal hari ini
+    const orderDateInput = document.getElementById("order-date");
+    const today = new Date().toISOString().split('T')[0];
+    orderDateInput.value = today;
+
+    // Mengambil elemen total pembayaran
+    const totalPaymentElement = document.getElementById("total-payment");
+    const discountCodeInput = document.getElementById("discount-code");
+
+    // Menghitung total pembayaran awal
+    let totalPayment = initialTotalPayment;
+    totalPaymentElement.textContent = `Rp ${totalPayment.toLocaleString('id-ID')},00`;
+
+    // Fungsi untuk mengupdate total pembayaran saat kode diskon dimasukkan
+    discountCodeInput.addEventListener("input", () => {
+        const discountCode = discountCodeInput.value.toUpperCase();
+        const discount = discountCodes[discountCode] || 0;
+        const discountedTotal = initialTotalPayment * (1 - discount);
+
+        totalPayment = discountedTotal;
+        totalPaymentElement.textContent = `Rp ${totalPayment.toLocaleString('id-ID')},00`;
+    });
+
+    // Handler untuk tombol 'Pesan Jasa'
+    document.getElementById("submit-order").addEventListener("click", () => {
+        const paymentMethod = document.getElementById("payment-method").value;
+
+        if (paymentMethod === "Pilih Metode") {
+            alert("Silakan pilih metode pembayaran.");
+            return;
+        }
+
+        alert(`Pesanan berhasil dibuat dengan total pembayaran Rp ${totalPayment.toLocaleString('id-ID')},00 menggunakan metode ${paymentMethod}.`);
+    });
+</script>

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="mt-16" style="min-height: 80vh; padding: 20px;">
+<body class="bg-white text-gray-900">
+
+    <div class="container mx-auto p-6">
+        <div class="mb-4">
+            <div class="text-2xl font-bold mb-2">{{ subcategory.category }}</div>
+            <div class="text-lg font-semibold mb-2">{{ subcategory.name }}</div>
+        </div>
+
+        <div class="description-box mb-6 p-4 border border-gray-300 rounded-md shadow-sm">
+            <p class="text-sm">{{ subcategory.description }}</p>
+        </div>
+
+        <div class="session-box mb-6 p-4 border border-gray-300 rounded-md shadow-sm">
+            <h3 class="text-xl font-semibold mb-4">Pilihan Sesi Layanan</h3>
+            {% for session in subcategory.sessions %}
+                <div class="session flex justify-between items-center border-b border-gray-200 py-2">
+                    <span class="text-sm">{{ session.name }}</span>
+                    <span class="text-sm">{{ session.price }}</span>
+                    <a href="{% url 'feat_2_green:buat_pemesanan' subkategori_id=subcategory.id %}" class="btn-order px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition">
+                        Pesan
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="worker-box mb-6 p-4 border border-gray-300 rounded-md shadow-sm">
+            <h3 class="text-xl font-semibold mb-4">Pekerja</h3>
+            <div class="workers space-y-2">
+                {% for worker in subcategory.workers %}
+                    <div class="worker text-sm text-gray-700">{{ worker.name }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="testimonial-box mb-6 p-4 border border-gray-300 rounded-md shadow-sm">
+            <h3 class="text-xl font-semibold mb-4">Testimoni</h3>
+            {% for testimonial in subcategory.testimonials %}
+                <div class="testimonial mb-4">
+                    <p class="font-bold">{{ testimonial.user }} - {{ testimonial.date }}</p>
+                    <p class="text-sm text-gray-600">{{ testimonial.text }}</p>
+                    <p class="text-sm">Pekerja: {{ testimonial.worker }} | Rating: {{ testimonial.rating }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center">
+            <a href="{% url 'feat_2_green:homepage' %}" class="text-blue-500 hover:underline">Kembali ke Homepage</a>
+        </div>
+    </div>
+    
+</body>
+</div>
+{% endblock content %}

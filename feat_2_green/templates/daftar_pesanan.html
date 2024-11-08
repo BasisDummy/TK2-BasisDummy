@@ -1,0 +1,16 @@
+<!-- templates/daftar_pesanan.html -->
+<h2>Daftar Pesanan Anda</h2>
+<ul>
+    {% for order in orders %}
+        <li>
+            <strong>{{ order.subcategory }}</strong><br>
+            Sesi: {{ order.session_name }}<br>
+            Harga: {{ order.price }}<br>
+            Tanggal Pemesanan: {{ order.date_ordered }}<br>
+            Status: {{ order.status }}
+        </li>
+    {% empty %}
+        <li>Belum ada pesanan.</li>
+    {% endfor %}
+</ul>
+<a href="/">Kembali ke Beranda</a>
