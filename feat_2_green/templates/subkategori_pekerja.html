@@ -2,50 +2,69 @@
 {% load static %}
 
 {% block content %}
-<div class="mt-16" style="min-height: 80vh; padding: 20px;">
-<body class="bg-white text-gray-800 p-6">
-    <h2 class="text-2xl font-bold mb-4">Detail Subkategori Jasa</h2>
-
-    <div class="mb-2 font-semibold">Kategori: {{ subcategory.category }}</div>
-    <div class="mb-4 font-semibold">Nama Subkategori: {{ subcategory.name }}</div>
-    
-    <div class="description-box border border-gray-300 p-4 rounded-lg mb-4 bg-white">
-        <p>{{ subcategory.description }}</p>
-    </div>
-
-    <div class="session-box border border-gray-300 p-4 rounded-lg mb-4 bg-white">
-        <h3 class="text-xl font-bold mb-3">Pilihan Sesi Layanan</h3>
-        {% for session in subcategory.sessions %}
-            <div class="session flex justify-between mb-2">
-                <span>{{ session.name }}</span>
-                <span>{{ session.price }}</span>
-            </div>
-        {% endfor %}
-    </div>
-
-    <div class="worker-box border border-gray-300 p-4 rounded-lg mb-4 bg-white">
-        <h3 class="text-xl font-bold mb-3">Pekerja</h3>
-        <div class="workers">
-            {% for worker in subcategory.workers %}
-                <div class="worker mb-2">{{ worker.name }}</div>
-            {% endfor %}
+<div class="mt-16" style="background-color: rgba(150, 155, 74, 0.2); min-height: 80vh; padding: 20px;">
+<body class="bg-white text-gray-900">
+    <div class="container mx-auto p-6">
+        <div class="mb-4">
+            <div class="text-2xl font-bold mb-2">{{ subcategory.category }}</div>
+            <div class="text-lg font-semibold mb-2">{{ subcategory.name }}</div>
         </div>
-    </div>
 
-    <button id="joinButton" class="btn-order px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 focus:outline-none mb-4 items-center">Bergabung untuk Bekerja</button>
+        <!-- Konten Utama -->
+        <div class="description-box mb-6 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
+            <p class="text-sm">{{ subcategory.description }}</p>
+        </div>
 
-    <div class="testimonial-box border border-gray-300 p-4 rounded-lg bg-white mb-6">
-        <h3 class="text-xl font-bold mb-3">Testimoni</h3>
-        {% for testimonial in subcategory.testimonials %}
-            <div class="testimonial mb-4">
-                <p><strong>{{ testimonial.user }}</strong> - {{ testimonial.date }}</p>
-                <p>{{ testimonial.text }}</p>
-                <p>Pekerja: {{ testimonial.worker }} | Rating: {{ testimonial.rating }}</p>
+        <!-- Layout Sampingan untuk Session Box dan Worker Box -->
+        <div class="flex flex-col lg:flex-row gap-6 mb-6">
+            <!-- Session Box -->
+            <div class="session-box flex-1 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
+                <h3 class="text-xl font-semibold mb-4">Pilihan Sesi Layanan</h3>
+                {% for session in subcategory.sessions %}
+                    <div class="session flex justify-between items-center border-b border-gray-200 py-2">
+                        <span class="text-sm">{{ session.name }}</span>
+                        <span class="text-sm">{{ session.price }}</span>
+
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </div>
 
-    <a href="{% url 'feat_2_green:homepage' %}" class="text-blue-500 hover:text-blue-600">Kembali ke Homepage</a>
+            <!-- Worker Box -->
+            <div class="worker-box flex-1 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
+                <h3 class="text-xl font-semibold mb-4">Pekerja</h3>
+                <div class="workers grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {% for worker in subcategory.workers %}
+                        <div class="worker-card p-4 bg-gray-50 border border-gray-200 rounded-md shadow-sm">
+                            <p class="worker-name font-semibold text-gray-800 text-center">{{ worker.name }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+        <div class="flex justify-end mb-4">
+            <button id="joinButton" class="btn-order px-4 py-2 bg-[#969b4a] text-white rounded-lg hover:bg-[#646733] focus:outline-none">
+                Bergabung untuk Bekerja
+            </button>
+        </div>
+        <!-- Testimonial Box -->
+        <div class="testimonial-box mb-6 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
+            <h3 class="text-xl font-semibold mb-4">Testimoni</h3>
+            <div class="testimonials grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for testimonial in subcategory.testimonials %}
+                <div class="testimonial-card p-4 bg-gray-50 border border-gray-200 rounded-md shadow-sm">
+                    <div class="flex justify-between items-center mb-2">
+                        <p class="font-bold text-gray-800">{{ testimonial.user }}</p>
+                        <p class="text-sm text-gray-500">{{ testimonial.date }}</p>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">{{ testimonial.text }}</p>
+                    <p class="text-sm">Pekerja: {{ testimonial.worker }}</p>
+                    <p class="text-sm">Rating: {{ testimonial.rating }}/5</p>
+                </div>                
+                {% endfor %}
+            </div>
+        </div>
+
 
     <script>
         const isWorkerJoined = false; // Ganti nilai ini sesuai dengan kondisi login atau data server

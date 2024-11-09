@@ -1,37 +1,49 @@
-<div id="order-form" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
-    <h2 class="text-xl font-bold mb-4 text-center">Pesan Jasa</h2>
+{% extends 'base.html' %}
+{% load static %}
 
-    <!-- Tanggal Pemesanan -->
-    <div class="mb-4">
-        <label class="block text-gray-700">Tanggal Pemesanan:</label>
-        <input id="order-date" type="text" readonly class="w-full p-2 border rounded-md bg-gray-100">
+{% block content %}
+<div class="mt-16 min-h-screen px-4" style="background-color: rgba(150, 155, 74, 0.2); padding: 20px;">
+    <div id="order-form" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+
+        <h2 class="text-xl font-bold mb-6 text-center">Pesan Jasa</h2>
+        <form method="POST" id="order-form">
+            {% csrf_token %}
+            
+            <!-- Tanggal Pemesanan -->
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Tanggal Pemesanan:</label>
+                <input id="order-date" type="text" readonly class="w-full p-2 border rounded-md bg-gray-100">
+            </div>
+        
+            <!-- Kode Diskon -->
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Diskon:</label>
+                <input id="discount-code" type="text" placeholder="Kode Diskon" class="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-[#969b4a]">
+            </div>
+        
+            <!-- Total Pembayaran -->
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Total Pembayaran:</label>
+                <p id="total-payment" class="text-lg font-semibold text-gray-800">Rp 0,00</p>
+            </div>
+        
+            <!-- Metode Pembayaran -->
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Metode Pembayaran:</label>
+                <select id="payment-method" class="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-[#969b4a]">
+                    <option>Pilih Metode</option>
+                    <option>Transfer Bank</option>
+                    <option>Gopay</option>
+                    <option>OVO</option>
+                </select>
+            </div>
+        
+            <!-- Tombol Pesan Jasa -->
+            <a id="submit-order" href="{% url 'feat_2_green:daftar_pesanan' %}" class="block w-full py-2 text-center bg-[#969b4a] text-white rounded-md hover:bg-[#646733] focus:outline-none focus:ring focus:ring-[#969b4a]">
+            Pesan
+            </a>
+        </form>
     </div>
-
-    <!-- Kode Diskon -->
-    <div class="mb-4">
-        <label class="block text-gray-700">Diskon:</label>
-        <input id="discount-code" type="text" placeholder="Kode Diskon" class="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300">
-    </div>
-
-    <!-- Total Pembayaran -->
-    <div class="mb-4">
-        <label class="block text-gray-700">Total Pembayaran:</label>
-        <p id="total-payment" class="text-lg font-semibold">Rp 0,00</p>
-    </div>
-
-    <!-- Metode Pembayaran -->
-    <div class="mb-4">
-        <label class="block text-gray-700">Metode Pembayaran:</label>
-        <select id="payment-method" class="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300">
-            <option>Pilih Metode</option>
-            <option>Transfer Bank</option>
-            <option>Gopay</option>
-            <option>OVO</option>
-        </select>
-    </div>
-
-    <!-- Tombol Pesan Jasa -->
-    <button id="submit-order" class="w-full py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition">Pesan Jasa</button>
 </div>
 
 <script>
@@ -66,7 +78,7 @@
     });
 
     // Handler untuk tombol 'Pesan Jasa'
-    document.getElementById("submit-order").addEventListener("click", () => {
+    document.getElementById("submit-order").addEventListener("click", (event) => {
         const paymentMethod = document.getElementById("payment-method").value;
 
         if (paymentMethod === "Pilih Metode") {
@@ -74,6 +86,10 @@
             return;
         }
 
-        alert(`Pesanan berhasil dibuat dengan total pembayaran Rp ${totalPayment.toLocaleString('id-ID')},00 menggunakan metode ${paymentMethod}.`);
+        z
+        // Submit form (if you want to actually submit it after handling)
+        document.getElementById("order-form").submit();
     });
 </script>
+
+{% endblock content %}
