@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Daftar Testimoni</h2>
+<div>
+    {% for t in testimoni %}
+        <div class="border p-4 my-2">
+            <p><strong>{{ t.user }}</strong> - {{ t.date }}</p>
+            <p>{{ t.text }}</p>
+            <p>Rating: {{ t.rating }}/5</p>
+            <p>Pekerja: {{ t.worker }}</p>
+        </div>
+    {% empty %}
+        <p>Belum ada testimoni.</p>
+    {% endfor %}
+</div>
+{% endblock %}
