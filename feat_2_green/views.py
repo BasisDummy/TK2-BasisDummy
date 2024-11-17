@@ -161,7 +161,7 @@ def subkategori(request):
         subcategory = subcategory_data[subkategori_id]
         # Tambahkan ID ke dalam dictionary subkategori
         subcategory['id'] = subkategori_id
-        return render(request, 'subkategori_pekerja.html', {'subcategory': subcategory})
+        return render(request, 'subkategori.html', {'subcategory': subcategory})
     else:
         return render(request, '404.html', {'message': 'ID Subkategori tidak ditemukan atau tidak valid.'}, status=404)
 
