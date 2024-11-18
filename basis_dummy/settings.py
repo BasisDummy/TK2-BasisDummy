@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'feat_2_green',
+    'feat_4_red',
+    'django.contrib.humanize',
     'feat_3_blue',
 ]
 

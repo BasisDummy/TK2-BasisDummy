@@ -1,0 +1,332 @@
+/* feat_4_red/static/css/style.css */
+
+/* Button Styles */
+.btn {
+    background-color: #969b4a;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #646733;
+}
+
+/* Kategori Jasa Header */
+.kategori-jasa-header {
+    background-color: #C8CC7D;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.kategori-jasa-header:hover {
+    background-color: rgba(200, 204, 125, 0.1);
+}
+
+/* General Container Styles */
+.rounded-rectangle {
+    background-color: rgba(150, 155, 74, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+/* Transaction Item Styles */
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.transaction-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Ensure each child div takes equal space */
+.transaction-item > div {
+    flex: 1;
+}
+
+.transaction-amount {
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+    width: 30%; /* Adjust as needed */
+}
+
+.transaction-date {
+    text-align: center;
+    color: #666;
+    width: 30%; /* Adjust as needed */
+}
+
+.transaction-type {
+    text-align: right;
+    font-style: italic;
+    color: #555;
+    width: 40%; /* Adjust as needed */
+}
+
+/* Input Styles */
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    border-color: #969b4a;
+    outline: none;
+    box-shadow: 0 0 5px rgba(150, 155, 74, 0.5);
+}
+
+/* Header Flex Container */
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+/* responsive */
+@media (max-width: 600px) {
+    .header-flex {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-flex div, .header-flex button {
+        margin-bottom: 10px;
+    }
+
+    .transaction-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .transaction-amount, .transaction-date, .transaction-type {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+.messages {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.alert-success {
+    background-color: #28a745;
+}
+
+.alert-error, .alert-danger {
+    background-color: #dc3545;
+}
+
+.alert-info {
+    background-color: #17a2b8;
+}
+
+.alert:hover {
+    opacity: 1;
+}
+
+/* Search Bar */
+.search-bar {
+    display: flex;
+    flex-direction: column; /* Mengatur form menjadi dua baris */
+    align-items: stretch;
+    margin-bottom: 30px;
+}
+
+.search-bar form {
+    display: flex;
+    flex-direction: column; /* Memastikan form memiliki dua baris */
+    gap: 15px;
+}
+
+.search-bar label {
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.search-bar select,
+.search-bar input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+}
+
+.search-bar button {
+    padding: 10px 20px;
+    background-color: #969b4a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+    background-color: #646733;
+}
+
+/* Jobs List */
+.jobs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Job Item Styles */
+.job-item, .status-job-item {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.job-item:hover, .status-job-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.job-details, .status-job-details {
+    margin-bottom: 10px;
+}
+
+.job-details strong, .status-job-details strong {
+    font-size: 1.1em;
+    color: #333;
+}
+
+.detail-label {
+    font-weight: bold;
+    color: #555;
+    margin-right: 5px;
+}
+
+.job-actions, .status-job-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; /* Menambahkan jarak antar tombol */
+}
+
+.status-job-actions {
+    display: flex;
+    gap: 10px; /* Menambahkan jarak antar tombol */
+    flex-wrap: wrap;
+}
+
+.status-job-actions .btn {
+    flex: 1 1 auto;
+    max-width: 200px;
+}
+
+.status-job-item .btn {
+    margin-top: 5px; /* Menambahkan jarak atas antara tombol dan teks status */
+}
+
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.form-row.left {
+    justify-content: flex-start;
+}
+
+.form-row.right {
+    justify-content: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input[type="text"],
+.form-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.search-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 27px;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+    .search-bar form {
+        gap: 10px;
+    }
+
+    .search-bar select,
+    .search-bar input[type="text"],
+    .search-bar button {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .job-actions, .status-job-actions {
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .status-job-actions {
+        align-items: center;
+    }
+
+    .status-job-actions .btn {
+        width: 100%;
+    }
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

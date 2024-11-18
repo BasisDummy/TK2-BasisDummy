@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="rounded-rectangle">
+    <!-- Form Header -->
+    <div class="kategori-jasa-header">
+        <h2>Form - Pekerja</h2>
+    </div>
+    
+    <!-- User Details -->
+    <div style="text-align: center; margin-top: 20px;">
+        <p><strong>Nama User:</strong> {{ form.nama_user }}</p>
+        <p><strong>Tanggal Transaksi:</strong> {{ form.tanggal_transaksi }}</p>
+        <p><strong>Saldo User:</strong> {{ form.saldo_user }}</p>
+    </div>
+    
+    <!-- Transaction Form -->
+    <form method="POST" action="{% url 'transaksi_mypay' %}">
+        {% csrf_token %}
+        <!-- Kategori Transaksi Dropdown -->
+        <div style="text-align: center; margin-top: 20px;">
+            <label for="kategori_transaksi"><strong>Kategori Transaksi:</strong></label>
+            <select id="kategori_transaksi" name="kategori_transaksi" onchange="showStateForm()" required>
+                <option value="">-- Pilih Kategori --</option>
+                {% for kategori in form.kategori_transaksi %}
+                    <option value="{{ kategori }}">{{ kategori }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <!-- State Form -->
+        <div id="state_form" class="state-form" style="margin-top: 20px;">
+            <!-- Dynamic content based on dropdown selection -->
+        </div>
+    </form>
+</div>
+
+<script>
+    function showStateForm() {
+        var kategori = document.getElementById("kategori_transaksi").value;
+        console.log("Selected Kategori:", kategori); // Debugging line
+        var stateForm = document.getElementById("state_form");
+        stateForm.innerHTML = ""; // Clear previous content
+        
+        if(kategori === "TOP UP MY PAY") {
+            stateForm.innerHTML = `
+                <label for="nominal"><strong>Nominal:</strong></label><br>
+                <input type="number" id="nominal" name="nominal" required><br><br>
+                <button type="submit" class="btn">Top Up</button>
+            `;
+        }
+        else if(kategori === "TRANSFER MYPAY") {
+            stateForm.innerHTML = `
+                <label for="no_hp"><strong>No HP Tujuan:</strong></label><br>
+                <input type="text" id="no_hp" name="no_hp" required><br><br>
+                <label for="nominal_transfer"><strong>Nominal:</strong></label><br>
+                <input type="number" id="nominal_transfer" name="nominal_transfer" required><br><br>
+                <button type="submit" class="btn">Transfer</button>
+            `;
+        }
+        else if(kategori === "WITHDRAWAL") {
+            stateForm.innerHTML = `
+                <label for="nama_bank"><strong>Nama Bank:</strong></label><br>
+                <select id="nama_bank" name="nama_bank" required>
+                    <option value="">-- Pilih Nama Bank --</option>
+                    <option value="GoPay">GoPay</option>
+                    <option value="OVO">OVO</option>
+                    <option value="Virtual Account BCA">Virtual Account BCA</option>
+                    <option value="Virtual Account BNI">Virtual Account BNI</option>
+                    <option value="Virtual Account Mandiri">Virtual Account Mandiri</option>
+                </select><br><br>
+                <label for="no_rekening"><strong>No Rekening:</strong></label><br>
+                <input type="text" id="no_rekening" name="no_rekening" required><br><br>
+                <label for="nominal_withdrawal"><strong>Nominal:</strong></label><br>
+                <input type="number" id="nominal_withdrawal" name="nominal_withdrawal" required><br><br>
+                <button type="submit" class="btn">Withdraw</button>
+            `;
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,90 @@
+<!-- feat_4_red/templates/feat_4_red/status_pekerjaan_jasa.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %} 
+
+{% block content %}
+<div class="rounded-rectangle">
+    <!-- Bagian Pesan -->
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="search-bar">
+        <form method="get">
+            <!-- Baris Pertama: Nama Jasa -->
+            <div class="form-row left">
+                <div class="form-group" style="flex: 1;">
+                    <label for="nama_jasa"><strong>Nama Jasa:</strong></label>
+                    <input type="text" id="nama_jasa" name="nama_jasa" value="{{ nama_jasa }}" placeholder="Masukkan Nama Jasa">
+                </div>
+            </div>
+
+            <!-- Baris Kedua: Status Pesanan dan Search Button -->
+            <div class="form-row right">
+                <div class="form-group" style="flex: 1;">
+                    <label for="status_pesanan"><strong>Status Pesanan:</strong></label>
+                    <select id="status_pesanan" name="status_pesanan">
+                        <option value="">-- Semua Status --</option>
+                        {% for status in status_options %}
+                            <option value="{{ status }}" {% if status_pesanan_filter == status %}selected{% endif %}>{{ status }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group search-button-container" style="flex: 0 0 auto;">
+                    <button type="submit" class="btn">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Display Jobs -->
+    <div class="jobs-list">
+        {% for job in jobs %}
+            <div class="status-job-item">
+                <div class="status-job-details">
+                    <strong>{{ job.subkategori }}</strong>
+                </div>
+                <div class="status-job-details">
+                    <span class="detail-label">Tanggal Pemesanan:</span> {{ job.tanggal_pemesanan }}
+                </div>
+                <div class="status-job-details">
+                    <span class="detail-label">Tanggal Pekerjaan:</span> {{ job.tanggal_pekerjaan }}
+                </div>
+                <div class="status-job-details">
+                    <span class="detail-label">Nama Pelanggan:</span> {{ job.nama_pelanggan }}
+                </div>
+                <div class="status-job-details">
+                    <span class="detail-label">Total Biaya:</span> Rp {{ job.total_biaya|intcomma }}
+                </div>
+                <div class="status-job-details">
+                    <span class="detail-label">Status:</span> {{ job.status }}
+                </div>
+                <div class="status-job-actions">
+                    {% if job.status != 'Pesanan Selesai' and job.status != 'Pesanan Dibatalkan' %}
+                        <form method="post" action="{% url 'update_job_status' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="job_id" value="{{ job.id }}">
+                            {% if job.status == 'Menunggu Pekerja Berangkat' %}
+                                <button type="submit" name="action" value="tiba" class="btn">Tiba Di Lokasi</button>
+                            {% elif job.status == 'Pekerja Tiba Di Lokasi' %}
+                                <button type="submit" name="action" value="mulai" class="btn">Melakukan Pelayanan Jasa</button>
+                            {% elif job.status == 'Pelayanan Jasa Sedang Dilakukan' %}
+                                <button type="submit" name="action" value="selesai" class="btn">Selesai Melakukan Pelayanan</button>
+                            {% endif %}
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center">Tidak ada pekerjaan tersedia.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
