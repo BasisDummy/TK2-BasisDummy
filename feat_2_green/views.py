@@ -153,8 +153,9 @@ subcategory_data = {
 def homepage(request):
     return render(request, 'homepage.html')
 
-def subkategori(request):
-    subkategori_id = request.GET.get('id')
+def subkategori(request, subcategory_id):
+    # Gunakan subcategory_id langsung dari parameter
+    subkategori_id = subcategory_id
 
     # Pastikan ID subkategori ada di data
     if subkategori_id in subcategory_data:
