@@ -153,17 +153,14 @@ subcategory_data = {
 def homepage(request):
     return render(request, 'homepage.html')
 
-def subkategori(request):
-    subkategori_id = request.GET.get('id')
+def subkategori(request, subcategory_id):
+    # Ambil data subkategori berdasarkan ID
+    subcategory = subcategory_data.get(subcategory_id)
+    if not subcategory:
+        return render(request, '404.html', {"message": "Subkategori tidak ditemukan."}, status=404)
 
-    # Pastikan ID subkategori ada di data
-    if subkategori_id in subcategory_data:
-        subcategory = subcategory_data[subkategori_id]
-        # Tambahkan ID ke dalam dictionary subkategori
-        subcategory['id'] = subkategori_id
-        return render(request, 'subkategori_pekerja.html', {'subcategory': subcategory})
-    else:
-        return render(request, '404.html', {'message': 'ID Subkategori tidak ditemukan atau tidak valid.'}, status=404)
+    # Tambahkan ID subkategori ke konteks template
+    return render(request, 'subkategori.html', {'subcategory': subcategory, 'subcategory_id': subcategory_id})
 
 # This will be used to temporarily store orders (session-based)
 orders = {}
@@ -220,6 +217,7 @@ def daftar_pesanan(request):
     # Dummy data
     orders = [
         {
+            'id': 1,
             'subcategory': 'Subkategori Jasa 1-2',
             'session_name': 'Sesi Layanan 1',
             'price': 'Rp 150.000',
@@ -227,6 +225,7 @@ def daftar_pesanan(request):
             'status': 'Menunggu Pembayaran',
         },
         {
+            'id': 2,
             'subcategory': 'Subkategori Jasa 2-3',
             'session_name': 'Sesi Layanan 1',
             'price': 'Rp 150.000',
@@ -234,6 +233,7 @@ def daftar_pesanan(request):
             'status': 'Mencari Pekerja Terdekat',
         },
         {
+            'id': 3,
             'subcategory': 'Subkategori Jasa 3-1',
             'session_name': 'Sesi Layanan 2',
             'price': 'Rp 150.000',
