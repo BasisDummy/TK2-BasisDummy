@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'feat_2_green',
     'feat_4_red',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
