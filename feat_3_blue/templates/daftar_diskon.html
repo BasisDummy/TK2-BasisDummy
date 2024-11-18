@@ -5,40 +5,71 @@
 <!-- Daftar Voucher -->
 <h3 class="text-xl font-semibold">Voucher</h3>
 <div class="border rounded p-4 mb-4">
-    {% for voucher in voucher_data %}
-        <div class="border-b pb-2 mb-2">
-            <p>Kode: {{ voucher.code }}</p>
-            <p>Potongan: {{ voucher.potongan }}</p>
-            <p>Min Transaksi: {{ voucher.min_transaksi }}</p>
-            <p>Jumlah Hari Berlaku: {{ voucher.hari_berlaku }}</p>
-            <p>Kuota Penggunaan: {{ voucher.kuota }}</p>
-            <p>Harga: {{ voucher.harga }}</p>
-            <button onclick="beliVoucher({{ voucher.id }})" class="bg-blue-500 text-white px-4 py-2 rounded">Beli</button>
-        </div>
-    {% empty %}
-        <p>Tidak ada voucher yang tersedia.</p>
-    {% endfor %}
+    <table class="w-full border-collapse border border-[#c8cc7d]">
+        <thead class="bg-[#C8CC7D]">
+            <tr>
+                <th class="border border-[#c8cc7d] p-2">Kode</th>
+                <th class="border border-[#c8cc7d] p-2">Potongan</th>
+                <th class="border border-[#c8cc7d] p-2">Min Transaksi Pemesanan</th>
+                <th class="border border-[#c8cc7d] p-2">Jumlah Hari Berlaku</th>
+                <th class="border border-[#c8cc7d] p-2">Kuota Penggunaan</th>
+                <th class="border border-[#c8cc7d] p-2">Harga</th>
+                <th class="border border-[#c8cc7d] p-2">Beli</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for voucher in voucher_data %}
+            <tr>
+                <td class="border border-[#c8cc7d] p-2 text-center">{{ voucher.code }}</td>
+                <td class="border border-[#c8cc7d] p-2 text-center">{{ voucher.potongan }}</td>
+                <td class="border border-[#c8cc7d] p-2 text-center">{{ voucher.min_transaksi }}</td>
+                <td class="border border-[#c8cc7d] p-2 text-center">{{ voucher.hari_berlaku }}</td>
+                <td class="border border-[#c8cc7d] p-2 text-center">{{ voucher.kuota }}</td>
+                <td class="border border-[#c8cc7d] p-2 text-center">{{ voucher.harga }}</td>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                    <button onclick="beliVoucher({{ voucher.id }})" class="bg-[#969b4a] text-white px-4 py-2 rounded hover:bg-[#646733]">Beli</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="border border-[#c8cc7d] p-2 text-center">Tidak ada voucher yang tersedia.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <!-- Daftar Promo -->
 <h3 class="text-xl font-semibold">Promo</h3>
 <div class="border rounded p-4">
-    {% for promo in promo_data %}
-        <div class="border-b pb-2 mb-2">
-            <p>Kode: {{ promo.code }}</p>
-            <p>Tanggal Akhir Berlaku: {{ promo.expiry_date }}</p>
-        </div>
-    {% empty %}
-        <p>Tidak ada promo yang tersedia.</p>
-    {% endfor %}
+    <table class="w-full border-collapse border border-[#c8cc7d]">
+        <thead class="bg-[#C8CC7D]">
+            <tr>
+                <th class="border border-[#c8cc7d] p-2">Kode</th>
+                <th class="border border-[#c8cc7d] p-2">Tanggal Akhir Berlaku</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for promo in promo_data %}
+            <tr>
+                <td class="border border-[#c8cc7d] p-2 text-center">{{ promo.code }}</td>
+                <td class="border border-[#c8cc7d] p-2 text-center">{{ promo.expiry_date }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2" class="border border-[#c8cc7d] p-2 text-center">Tidak ada promo yang tersedia.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <!-- Modal Notifikasi -->
 <div id="modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white p-4 rounded shadow-lg w-80 text-center">
-        <h3 id="modal-title" class="text-xl font-bold mb-2"></h3>
-        <p id="modal-message" class="mb-4"></p>
-        <button onclick="closeModal()" class="bg-blue-500 text-white px-4 py-2 rounded">Tutup</button>
+    <div class="bg-white p-6 rounded shadow-lg w-96 text-center border border-gray-300">
+        <h3 id="modal-title" class="text-xl font-bold mb-4"></h3>
+        <p id="modal-message" class="mb-6"></p>
+        <button onclick="closeModal()" class="px-4 py-2 border border-gray-500 rounded hover:bg-gray-100">Button Tutup</button>
     </div>
 </div>
 
@@ -54,12 +85,15 @@
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                showModal("Sukses", data.message);
+                showModal("SUKSES", `Selamat! Anda berhasil membeli voucher kode ${data.code}. Voucher ini akan berlaku hingga tanggal ${data.expiry_date} dengan kuota penggunaan sebanyak ${data.quota} kali.`);
             } else {
-                showModal("Gagal", data.message);
+                showModal("GAGAL", "Maaf, saldo Anda tidak cukup untuk membeli voucher ini.");
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            showModal("GAGAL", "Terjadi kesalahan pada server.");
+        });
     }
 
     function showModal(title, message) {

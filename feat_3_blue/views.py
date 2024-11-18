@@ -48,7 +48,6 @@ promo_data = [
 ]
 
 # CR Testimoni: Buat Testimoni Baru
-@login_required
 def buat_testimoni(request, order_id):
     # Filter pesanan selesai dari data hard-coded
     order = next((o for o in pesanan_data if o["id"] == order_id and o["status"] == "Selesai"), None)
@@ -68,16 +67,11 @@ def buat_testimoni(request, order_id):
             "date": datetime.now().strftime("%Y-%m-%d"),
         }
         testimoni_data.append(new_testimoni)
-        return redirect('feat_3_blue:daftar_testimoni')
+        return redirect(':daftar_testimoni')
 
-    return render(request, 'feat_3_blue/buat_testimoni.html', {'order': order})
-
-# R Testimoni: Daftar Testimoni
-def daftar_testimoni(request):
-    return render(request, 'feat_3_blue/daftar_testimoni.html', {'testimoni': testimoni_data})
+    return render(request, 'buat_testimoni.html', {'order': order})
 
 # C Pembelian Voucher: Beli Voucher
-@login_required
 def beli_voucher(request, voucher_id):
     # Hardcode saldo pengguna
     saldo_pengguna = 20000  # Rp 20.000, contoh saldo
@@ -98,4 +92,4 @@ def beli_voucher(request, voucher_id):
 
 # R Diskon: Daftar Diskon
 def daftar_diskon(request):
-    return render(request, 'feat_3_blue/daftar_diskon.html', {'voucher_data': voucher_data, 'promo_data': promo_data})
+    return render(request, 'daftar_diskon.html', {'voucher_data': voucher_data, 'promo_data': promo_data})
