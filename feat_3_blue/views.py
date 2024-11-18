@@ -210,7 +210,7 @@ def buat_testimoni(request, order_id):
         # Redirect ke halaman subkategori
         return redirect('feat_2_green:subkategori', subcategory_id=subcategory_id)
 
-    return render(request, 'buat_testimoni.html', {'order': order, 'range': range(1, 11)})
+    return render(request, 'buat_testimoni.html', {'order': order, 'range': range(1, 6)})
 
 # C Pembelian Voucher: Beli Voucher
 def beli_voucher(request, voucher_id):

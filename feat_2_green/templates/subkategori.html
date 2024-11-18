@@ -26,7 +26,7 @@
                     <div class="session flex justify-between items-center border-b border-gray-200 py-2">
                         <span class="text-sm">{{ session.name }}</span>
                         <span class="text-sm">{{ session.price }}</span>
-                        <a href="{% url 'feat_2_green:buat_pemesanan' subkategori_id=subcategory_id %}" class="btn-order px-4 py-2 bg-[#969b4a] text-white rounded-md hover:bg-[#646733] transition">
+                        <a href="{% url 'feat_2_green:buat_pemesanan' subcategory_id=subcategory.id %}">
                             Pesan
                         </a>
                     </div>
