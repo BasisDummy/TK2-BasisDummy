@@ -1,0 +1,125 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi Pekerja</title>
+    <link rel="stylesheet" href="{% static 'css/register_user.css' %}">
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="container">
+            <h1>Registrasi Pekerja</h1>
+            {% if form.errors %}
+                <ul style="color: red;" class="errormsg">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="name">Nama:</label>
+                    <input type="text" name="name" id="name" required>
+                    {% if form.name.errors %}
+                        <div class="error">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" name="password" id="password" required >
+                    {% if form.password.errors %}
+                        <div class="error">{{ form.password.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Jenis Kelamin:</label>
+                    <select name="gender" id="gender" required>
+                        <option value="">Pilih Jenis Kelamin</option>
+                        <option value="L">Laki-laki</option>
+                        <option value="P">Perempuan</option>
+                    </select>
+                    {% if form.gender.errors %}
+                        <div class="error">{{ form.gender.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Nomor Telepon:</label>
+                    <input type="tel" name="phone" id="phone" required>
+                </div>
+
+                <div class="form-group dob">
+                    <label for="dob">Tanggal Lahir:</label>
+                    <input type="date" name="dob" id="dob" required>
+                    {% if form.dob.errors %}
+                        <div class="error">{{ form.dob.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Alamat:</label>
+                    <textarea name="address" id="address" required></textarea>
+                    {% if form.address.errors %}
+                        <div class="error">{{ form.address.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="account_number">Nomor Rekening:</label>
+                    <input type="text" name="account_number" id="account_number" required>
+                    {% if form.account_number.errors %}
+                        <div class="error">{{ form.account_number.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="npwp">NPWP:</label>
+                    <input type="text" name="npwp" id="npwp" required>
+                    {% if form.npwp.errors %}
+                        <div class="error">{{ form.npwp.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="photo_url">URL Foto:</label>
+                    <input type="text" name="photo_url" id="photo_url" required>
+                    {% if form.photo_url.errors %}
+                        <div class="error">{{ form.photo_url.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="bank_name">Nama Bank:</label>
+                    <select name="bank_name" id="bank_name" required>
+                        <option value="">Pilih Bank</option>
+                        <option value="gopay">Gopay</option>
+                        <option value="ovo">OVO</option>
+                        <option value="bca">Virtual Account BCA</option>
+                        <option value="bni">Virtual Account BNI</option>
+                        <option value="mandiri">Virtual Account Mandiri</option>
+                    </select>
+                    {% if form.bank_name.errors %}
+                        <div class="error">{{ form.bank_name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit">Daftar</button>
+            </form>
+        </div>
+    </div>
+ 
+</body>
+</html>

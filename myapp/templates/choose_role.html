@@ -1,0 +1,25 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Role</title>
+    <link rel="stylesheet" href="{% static 'css/choose_role.css' %}">
+</head>
+<body>
+
+    <div class="wrapper">
+        <div class="container">
+            <h1>Pilih Role Anda</h1>
+            <ul>
+                <li><a href="{% url 'register_user' %}">Register sebagai User</a></li>
+                <li><a href="{% url 'register_worker' %}">Register sebagai Worker</a></li>
+            </ul>
+            <p>Sudah punya akun? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+ 
+</body>
+</html>
