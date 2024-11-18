@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
 from datetime import datetime
+from django.http import JsonResponse
 
-# Hardcoded data 
 subcategory_data = {
     "1-1": {
         "name": "Subkategori Jasa 1-1",
@@ -150,117 +151,93 @@ subcategory_data = {
     },
 }
 
-def homepage(request):
-    return render(request, 'homepage.html')
+# Data dummy untuk diskon
+diskon_data = [
+    {"id": 1, "code": "DISKON10", "description": "Diskon 10% untuk semua layanan", "discount_percentage": 10},
+    {"id": 2, "code": "DISKON20", "description": "Diskon 20% untuk pelanggan baru", "discount_percentage": 20},
+]
 
-def subkategori(request):
-    subkategori_id = request.GET.get('id')
+# Data dummy untuk testimoni
+testimoni_data = [
+    {"id": 1, "user": "Pengguna A", "worker": "Pekerja 1", "rating": 5, "text": "Sangat puas!", "date": "2024-11-07"},
+    {"id": 2, "user": "Pengguna B", "worker": "Pekerja 3", "rating": 4, "text": "Layanan bagus", "date": "2024-11-06"},
+]
 
-    # Pastikan ID subkategori ada di data
-    if subkategori_id in subcategory_data:
-        subcategory = subcategory_data[subkategori_id]
-        # Tambahkan ID ke dalam dictionary subkategori
-        subcategory['id'] = subkategori_id
-        return render(request, 'subkategori_pekerja.html', {'subcategory': subcategory})
-    else:
-        return render(request, '404.html', {'message': 'ID Subkategori tidak ditemukan atau tidak valid.'}, status=404)
+# Data dummy untuk pesanan jasa
+pesanan_data = [
+    {'id': 1, 'subcategory': '1-2', 'worker_name': 'Pekerja 1', 'status': 'Selesai'},
+    {'id': 2, 'subcategory': '2-3', 'worker_name': 'Pekerja 3', 'status': 'Mencari Pekerja Terdekat'},
+    {'id': 3, 'subcategory': '3-1', 'worker_name': 'Pekerja 5', 'status': 'Selesai'},
+]
 
-# This will be used to temporarily store orders (session-based)
-orders = {}
+# Data Dummy untuk Voucher dan Promo
+voucher_data = [
+    {"id": 1, "code": "VOUCHER10", "potongan": "10%", "min_transaksi": "Rp 100.000", "hari_berlaku": 30, "kuota": 5, "harga": "Rp 10.000"},
+    {"id": 2, "code": "VOUCHER20", "potongan": "20%", "min_transaksi": "Rp 200.000", "hari_berlaku": 15, "kuota": 3, "harga": "Rp 20.000"},
+]
 
-def buat_pemesanan(request, subkategori_id):
-    # Check if the ID is valid
-    if subkategori_id not in subcategory_data:
-        return render(request, '404.html', {'message': 'Subkategori tidak ditemukan'}, status=404)
+promo_data = [
+    {"id": 1, "code": "PROMO15", "expiry_date": "2024-12-31"},
+    {"id": 2, "code": "PROMO25", "expiry_date": "2024-11-30"},
+]
 
-    subkategori = subcategory_data[subkategori_id]
+# CR Testimoni: Buat Testimoni Baru
+def buat_testimoni(request, order_id):
+    # Cari pesanan berdasarkan ID dan status
+    order = next((o for o in pesanan_data if o["id"] == order_id and o["status"] == "Selesai"), None)
+
+    if not order:
+        return render(request, '404.html', {"message": "Pesanan tidak ditemukan atau belum selesai."}, status=404)
 
     if request.method == 'POST':
-        session_name = request.POST.get('session_name')
-        session_data = next((s for s in subkategori["sessions"] if s["name"] == session_name), None)
-
-        if not session_data:
-            return render(request, 'buat_pemesanan.html', {'subcategory': subkategori, 'error': 'Sesi tidak valid.'})
-
-        # Mengambil harga dan menghitung total pembayaran
-        price = int(session_data["price"].replace("Rp ", "").replace(".", ""))
-
-        # Cek apakah ada kode diskon
-        discount_code = request.POST.get('discount_code', '').upper()
-        discount_percentage = 0
-        discount_codes = {
-            "DISKON10": 0.1,
-            "DISKON20": 0.2,
+        # Ambil data dari form
+        rating = int(request.POST.get('rating'))
+        text = request.POST.get('text')
+        new_testimoni = {
+            "id": len(testimoni_data) + 1,
+            "user": request.user.username if request.user.is_authenticated else "Anonim",
+            "worker": order["worker_name"],
+            "rating": rating,
+            "text": text,
+            "date": datetime.now().strftime("%Y-%m-%d"),
         }
 
-        if discount_code in discount_codes:
-            discount_percentage = discount_codes[discount_code]
+        # Tambahkan testimoni ke subkategori terkait
+        subcategory_id = order['subcategory']  # Ambil subkategori dari pesanan
+        if subcategory_id in subcategory_data:
+            subcategory_data[subcategory_id]['testimonials'].append(new_testimoni)
 
-        total_payment = price * (1 - discount_percentage)
+        # Redirect ke halaman subkategori
+        return redirect('feat_2_green:subkategori', subcategory_id=subcategory_id)
 
-        # Mengambil daftar pesanan dari session, atau buat list baru jika belum ada
-        user_orders = request.session.get('orders', [])
-        user_orders.append({
-            'subcategory': subkategori['name'],
-            'session_name': session_name,
-            'price': f"Rp {total_payment:,.0f}".replace(",", "."),
-            'date_ordered': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'status': 'pending',
-        })
+    return render(request, 'buat_testimoni.html', {'order': order, 'range': range(1, 11)})
 
-        # Menyimpan daftar pesanan kembali ke session
-        request.session['orders'] = user_orders
+# C Pembelian Voucher: Beli Voucher
+def beli_voucher(request, voucher_id):
+    # Hardcode saldo pengguna
+    saldo_pengguna = 20000  # Rp 20.000, contoh saldo
+    voucher = next((v for v in voucher_data if v["id"] == voucher_id), None)
+    
+    if voucher:
+        harga_voucher = int(voucher["harga"].replace("Rp ", "").replace(".", ""))
+        if saldo_pengguna >= harga_voucher:
+            # Pembelian sukses
+            new_saldo = saldo_pengguna - harga_voucher
+            message = f"Selamat! Anda berhasil membeli voucher kode {voucher['code']}. Voucher ini berlaku hingga {datetime.now().date() + timedelta(days=voucher['hari_berlaku'])} dengan kuota penggunaan sebanyak {voucher['kuota']} kali."
+            return JsonResponse({"status": "success", "message": message, "new_saldo": new_saldo})
+        else:
+            # Gagal membeli voucher karena saldo tidak cukup
+            return JsonResponse({"status": "error", "message": "Maaf, saldo Anda tidak cukup untuk membeli voucher ini."})
+    
+    return JsonResponse({"status": "error", "message": "Voucher tidak ditemukan."})
 
-        # Redirect ke halaman daftar pesanan
-        return redirect('daftar_pesanan')
+# R Diskon: Daftar Diskon
+def daftar_diskon(request):
+    return render(request, 'daftar_diskon.html', {'voucher_data': voucher_data, 'promo_data': promo_data})
 
-    return render(request, 'buat_pemesanan.html', {'subcategory': subkategori})
-
-def daftar_pesanan(request):
-    # Dummy data
-    orders = [
-        {
-            'id': 1,
-            'subcategory': 'Subkategori Jasa 1-2',
-            'session_name': 'Sesi Layanan 1',
-            'price': 'Rp 150.000',
-            'worker_name': 'Pekerja 1',
-            'status': 'Menunggu Pembayaran',
-        },
-        {
-            'id': 2,
-            'subcategory': 'Subkategori Jasa 2-3',
-            'session_name': 'Sesi Layanan 1',
-            'price': 'Rp 150.000',
-            'worker_name': 'Pekerja 3',
-            'status': 'Mencari Pekerja Terdekat',
-        },
-        {
-            'id': 3,
-            'subcategory': 'Subkategori Jasa 3-1',
-            'session_name': 'Sesi Layanan 2',
-            'price': 'Rp 150.000',
-            'worker_name': 'Pekerja 5',
-            'status': 'Selesai',
-        },
+def daftar_testimoni(request):
+    testimoni_data = [
+        {"id": 1, "user": "User1", "worker": "Pekerja1", "rating": 5, "text": "Bagus!", "date": "2024-11-17"},
+        {"id": 2, "user": "User2", "worker": "Pekerja2", "rating": 4, "text": "Cukup baik.", "date": "2024-11-16"},
     ]
-
-    # Mengambil filter dari request GET
-    subcategory_filter = request.GET.get('subcategory', '')
-    status_filter = request.GET.get('status', '')
-    search_query = request.GET.get('search', '').lower()
-
-    # Memfilter data
-    if subcategory_filter:
-        orders = [order for order in orders if order['subcategory'] == subcategory_filter]
-
-    if status_filter:
-        orders = [order for order in orders if order['status'] == status_filter]
-
-    if search_query:
-        orders = [
-            order for order in orders
-            if search_query in order['worker_name'].lower() or search_query in order['session_name'].lower()
-        ]
-
-    return render(request, 'daftar_pesanan.html', {'orders': orders})
+    return render(request, 'daftar_testimoni.html', {'testimoni_data': testimoni_data})

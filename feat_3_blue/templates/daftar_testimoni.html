@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-screen bg-[#f5f5dc] py-10 px-6">
+    <div class="max-w-4xl mx-auto bg-white border border-[#c8cc7d] rounded-md shadow-md p-6">
+        <h2 class="text-2xl font-bold text-center text-[#969b4a] mb-6">Daftar Testimoni</h2>
+        <div class="grid grid-cols-1 gap-6">
+            {% for testimoni in testimoni_data %}
+            <div class="p-4 border border-gray-200 rounded-md shadow-sm bg-[#f9f9f2]">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-semibold text-[#646733]">{{ testimoni.user }}</h3>
+                    <p class="text-sm text-gray-500">{{ testimoni.date }}</p>
+                </div>
+                <p class="text-sm mb-2 text-gray-700"><strong>Pekerja:</strong> {{ testimoni.worker }}</p>
+                <p class="text-sm mb-2 text-gray-700"><strong>Rating:</strong> {{ testimoni.rating }}/10</p>
+                <p class="text-sm text-gray-600 italic">{{ testimoni.text }}</p>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 text-center">Belum ada testimoni.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

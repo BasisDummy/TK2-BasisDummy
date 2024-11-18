@@ -80,7 +80,7 @@
                                 {% if order.status == "Menunggu Pembayaran" or order.status == "Mencari Pekerja Terdekat" %}
                                     <button class="w-32 px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700">Batalkan</button>
                                 {% elif order.status == "Selesai" %}
-                                    <button class="w-32 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Buat Testimoni</button>
+                                <a href="{% url 'feat_3_blue:buat_testimoni' order.id %}" class="w-32 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Buat Testimoni</a>
                                 {% else %}
                                     <span class="text-gray-500">Tidak Ada Aksi</span>
                                 {% endif %}
