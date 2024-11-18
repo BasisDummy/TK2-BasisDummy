@@ -1,0 +1,32 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Worker</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home_worker' %}">Homepage</a></li>
+                    <li><a href="#">Kelola Pekerjaan Saya</a></li>
+                    <li><a href="#">Kelola Status Pekerjaan</a></li>
+                    <li><a href="#">MyPay</a></li>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        
+            <div class="content">
+                <h1>Selamat datang di Halaman Utama Pekerja</h1>
+                <p>Ini adalah halaman utama untuk pekerja yang sudah login.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

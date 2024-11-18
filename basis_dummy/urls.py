@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('feat_2_green.urls')),
     path('feat_4_red/', include('feat_4_red.urls')),
     path('feat_3_blue/', include('feat_3_blue.urls')),
+    path('myapp/', include('myapp.urls')),
 ]
