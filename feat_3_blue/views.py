@@ -214,21 +214,33 @@ def buat_testimoni(request, order_id):
 
 # C Pembelian Voucher: Beli Voucher
 def beli_voucher(request, voucher_id):
+    from datetime import datetime, timedelta
+
     # Hardcode saldo pengguna
-    saldo_pengguna = 20000  # Rp 20.000, contoh saldo
+    saldo_pengguna = 5000  # Rp 5.000, contoh saldo
     voucher = next((v for v in voucher_data if v["id"] == voucher_id), None)
     
     if voucher:
-        harga_voucher = int(voucher["harga"].replace("Rp ", "").replace(".", ""))
+        try:
+            harga_voucher = int(voucher["harga"].replace("Rp ", "").replace(".", ""))
+        except ValueError:
+            return JsonResponse({"status": "error", "message": "Harga voucher tidak valid."})
+
         if saldo_pengguna >= harga_voucher:
             # Pembelian sukses
             new_saldo = saldo_pengguna - harga_voucher
-            message = f"Selamat! Anda berhasil membeli voucher kode {voucher['code']}. Voucher ini berlaku hingga {datetime.now().date() + timedelta(days=voucher['hari_berlaku'])} dengan kuota penggunaan sebanyak {voucher['kuota']} kali."
-            return JsonResponse({"status": "success", "message": message, "new_saldo": new_saldo})
+            expiry_date = (datetime.now() + timedelta(days=voucher['hari_berlaku'])).strftime('%Y-%m-%d')
+            return JsonResponse({
+                "status": "success",
+                "message": f"Selamat! Anda berhasil membeli voucher kode {voucher['code']}.",
+                "new_saldo": new_saldo,
+                "code": voucher['code'],
+                "expiry_date": expiry_date,
+                "quota": voucher['kuota']
+            })
         else:
-            # Gagal membeli voucher karena saldo tidak cukup
-            return JsonResponse({"status": "error", "message": "Maaf, saldo Anda tidak cukup untuk membeli voucher ini."})
-    
+            return JsonResponse({"status": "error", "message": "Saldo Anda tidak cukup untuk membeli voucher ini."})
+
     return JsonResponse({"status": "error", "message": "Voucher tidak ditemukan."})
 
 # R Diskon: Daftar Diskon

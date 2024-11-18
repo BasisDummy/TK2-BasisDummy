@@ -71,7 +71,7 @@
     <div class="bg-white p-6 rounded shadow-lg w-96 text-center border border-gray-300">
         <h3 id="modal-title" class="text-xl font-bold mb-4"></h3>
         <p id="modal-message" class="mb-6"></p>
-        <button onclick="closeModal()" class="px-4 py-2 border border-gray-500 rounded hover:bg-gray-100">Button Tutup</button>
+        <button onclick="closeModal()" class="px-4 py-2 border border-gray-500 rounded hover:bg-gray-100">Tutup</button>
     </div>
 </div>
 
@@ -89,7 +89,7 @@
             if (data.status === 'success') {
                 showModal("SUKSES", `Selamat! Anda berhasil membeli voucher kode ${data.code}. Voucher ini akan berlaku hingga tanggal ${data.expiry_date} dengan kuota penggunaan sebanyak ${data.quota} kali.`);
             } else {
-                showModal("GAGAL", "Maaf, saldo Anda tidak cukup untuk membeli voucher ini.");
+                showModal("GAGAL", data.message);
             }
         })
         .catch(error => {
