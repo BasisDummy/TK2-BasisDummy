@@ -220,6 +220,7 @@ def daftar_pesanan(request):
     # Dummy data
     orders = [
         {
+            'id': 1,
             'subcategory': 'Subkategori Jasa 1-2',
             'session_name': 'Sesi Layanan 1',
             'price': 'Rp 150.000',
@@ -227,6 +228,7 @@ def daftar_pesanan(request):
             'status': 'Menunggu Pembayaran',
         },
         {
+            'id': 2,
             'subcategory': 'Subkategori Jasa 2-3',
             'session_name': 'Sesi Layanan 1',
             'price': 'Rp 150.000',
@@ -234,6 +236,7 @@ def daftar_pesanan(request):
             'status': 'Mencari Pekerja Terdekat',
         },
         {
+            'id': 3,
             'subcategory': 'Subkategori Jasa 3-1',
             'session_name': 'Sesi Layanan 2',
             'price': 'Rp 150.000',

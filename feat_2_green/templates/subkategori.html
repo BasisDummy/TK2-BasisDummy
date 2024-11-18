@@ -24,7 +24,7 @@
                     <div class="session flex justify-between items-center border-b border-gray-200 py-2">
                         <span class="text-sm">{{ session.name }}</span>
                         <span class="text-sm">{{ session.price }}</span>
-                        <a href="{% url 'feat_2_green:buat_pemesanan' subkategori_id=subcategory.id %}" class="btn-order px-4 py-2 bg-[#969b4a] text-white rounded-md hover:bg-[#646733] transition">
+                        <a href="{% url 'feat_2_green:buat_pemesanan' subkategori_id=subcategory_id %}" class="btn-order px-4 py-2 bg-[#969b4a] text-white rounded-md hover:bg-[#646733] transition">
                             Pesan
                         </a>
                     </div>
@@ -47,18 +47,20 @@
 
         <!-- Testimonial Box -->
         <div class="testimonial-box mb-6 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
-            <h3 class="text-xl font-semibold mb-4">Testimoni</h3>
+            <h3 class="text-xl font-semibold mb-4 text-[#969b4a]">Testimoni</h3>
             <div class="testimonials grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for testimonial in subcategory.testimonials %}
                 <div class="testimonial-card p-4 bg-gray-50 border border-gray-200 rounded-md shadow-sm">
                     <div class="flex justify-between items-center mb-2">
-                        <p class="font-bold text-gray-800">{{ testimonial.user }}</p>
+                        <p class="font-bold text-[#646733]">{{ testimonial.user }}</p>
                         <p class="text-sm text-gray-500">{{ testimonial.date }}</p>
                     </div>
                     <p class="text-sm text-gray-600 mb-2">{{ testimonial.text }}</p>
-                    <p class="text-sm">Pekerja: {{ testimonial.worker }}</p>
-                    <p class="text-sm">Rating: {{ testimonial.rating }}/5</p>
+                    <p class="text-sm text-[#646733]">Pekerja: {{ testimonial.worker }}</p>
+                    <p class="text-sm text-[#969b4a] font-semibold">Rating: {{ testimonial.rating }}/5</p>
                 </div>                
+                {% empty %}
+                <p class="text-gray-500">Belum ada testimoni.</p>
                 {% endfor %}
             </div>
         </div>

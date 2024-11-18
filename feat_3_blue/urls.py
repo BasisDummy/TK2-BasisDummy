@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import buat_testimoni, daftar_testimoni, daftar_diskon, beli_voucher
+from .views import buat_testimoni, daftar_diskon, beli_voucher, daftar_testimoni
 
 app_name = 'feat_3_blue'
 
