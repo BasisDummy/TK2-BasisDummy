@@ -1,0 +1,204 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home User</title>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  <style>
+    body {
+        background-color: rgba(150, 155, 74, 0.2);
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px auto;
+        padding: 20px;
+        max-width: 1200px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-section {
+        flex: 1;
+        margin: 0 10px;
+    }
+
+    .form-section h3 {
+        background-color: #C8CC7D;
+        padding: 10px;
+        border-radius: 8px;
+        color: #333;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .btn-update {
+        background-color: #969b4a;
+    }
+
+    .btn-update:hover {
+        background-color: #646733;
+    }
+
+    .hover-effect:hover {
+        background-color: rgba(200, 204, 125, 0.1);
+    }
+</style>
+</head>
+
+<body>
+  <div class="navbar-container">
+    <div class="navbar">
+      <nav>
+        <ul>
+          {% if role == "user" %}
+          <li><a href="{% url 'home_user' %}">Homepage</a></li>
+          <li><a href="{% url 'my_app' %}">MyPay</a></li>
+          <li>
+            <a href="{% url 'kelola_pesanan' %}">Kelola Pesanan Saya</a>
+          </li>
+          <li><a href="{% url 'daftar_diskon' %}">Diskon</a></li>
+          <li><a href="{% url 'profile' %}">Profile</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'home_worker' %}">Homepage</a></li>
+          <li><a href="{% url 'kelola_pekerjaan_worker' %}">Kelola Pekerjaan Saya</a></li>
+          <li><a href="{% url 'kelola_status_pekerjaan' %}">Kelola Status Pekerjaan</a></li>
+          <li><a href="{% url 'my_pay_worker' %}">MyPay</a></li>
+          <li><a href="{% url 'worker_profile' %}">Profile</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% endif %}
+
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div class="container">
+
+    {% if role == "user" %}
+    <!-- Form Pengguna -->
+    <form class="form-section" method="post">
+      {% csrf_token %}
+        <h3 class="hover-effect">Form Pengguna</h3>
+        <div class="form-group">
+            <label>Nama:</label>
+            <input type="text" name="name" placeholder="Masukkan nama" value="{{ user.name }}">
+        </div>
+        <div class="form-group">
+            <label>Jenis Kelamin:</label>
+            <input type="radio" name="gender" value="L" required {% if user.gender == "L" %} checked {% endif %}> Laki-laki
+            <input type="radio" name="gender" value="P" {% if user.gender == "P" %} checked {% endif %}> Perempuan
+
+        </div>
+        <div class="form-group">
+            <label>No HP:</label>
+            <input type="text" name="phone" placeholder="Masukkan nomor HP" value="{{ user.phone }}">
+
+        </div>
+        <div class="form-group">
+            <label>Tanggal Lahir:</label>
+            <input type="date" name="date" value="{{ user.date }}">
+        </div>
+        <div class="form-group">
+            <label>Alamat:</label>
+            <input type="text" placeholder="Masukkan alamat" name="address" value="{{ user.address }}">
+        </div>
+        <button class="btn-update">Submit</button>
+    </form>
+
+    {% else %}
+    <!-- Form Pekerja -->
+    <form method="post" class="form-section">
+      {% csrf_token %}
+
+        <h3 class="hover-effect">Form Pekerja</h3>
+        <div class="form-group">
+            <label>Nama:</label>
+            <input type="text"  name="name" placeholder="Masukkan nama" value="{{ worker.name }}">
+        </div>
+        <div class="form-group">
+            <label>Jenis Kelamin:</label>
+            <input type="radio" name="gender" required value="L" {% if worker.gender == "L" %} checked {% endif %}> Laki-laki
+            <input type="radio" name="gender" value="P" {% if worker.gender == "P" %} checked {% endif %}> Perempuan
+
+        </div>
+        <div class="form-group">
+            <label>No HP:</label>
+            <input type="text" name="phone" placeholder="Masukkan nomor HP" value="{{ worker.phone }}">
+
+        </div>
+        <div class="form-group">
+            <label>Tanggal Lahir:</label>
+            <input type="date" name="dob" required>
+        </div>
+        <div class="form-group">
+            <label>Alamat:</label>
+            <input type="text" name="address" placeholder="Masukkan alamat" value="{{ worker.address }}">
+
+        </div>
+        <div class="form-group">
+            <label>Nama Bank:</label>
+            <input type="text" name="bank_name" placeholder="Masukkan nama bank" value="{{ worker.bank_name }}">
+
+        </div>
+        <div class="form-group">
+            <label>No Rekening:</label>
+            <input type="text" name="account_number" placeholder="Masukkan nomor rekening" value="{{ worker.account_number }}">
+
+        </div>
+        <div class="form-group">
+            <label>NPWP:</label>
+            <input type="text" name="npwp" placeholder="Masukkan NPWP" value="{{ worker.npwp }}">
+
+        </div>
+        <div class="form-group">
+            <label>URL Foto:</label>
+            <input type="text" name="url_photo" placeholder="Masukkan URL foto" value="{{ worker.photo_url }}">
+
+        </div>
+        <button class="btn-update">Update</button>
+    </form>
+
+    {% endif %}
+  </div>
+
+</body>
+
+</html>
+
+{% endblock content %}

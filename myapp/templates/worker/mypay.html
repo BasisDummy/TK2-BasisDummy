@@ -1,0 +1,68 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Worker</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  </head>
+  <body>
+    <div class="navbar-container">
+      <div class="navbar">
+        <nav>
+          <ul>
+            <li><a href="{% url 'home_worker' %}">Homepage</a></li>
+            <li>
+              <a href="{% url 'kelola_pekerjaan_worker' %}"
+                >Kelola Pekerjaan Saya</a
+              >
+            </li>
+            <li>
+              <a href="{% url 'kelola_status_pekerjaan' %}"
+                >Kelola Status Pekerjaan</a
+              >
+            </li>
+            <li><a href="{% url 'my_pay_worker' %}">MyPay</a></li>
+            <li><a href="{% url 'worker_profile' %}">Profile</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div
+      class="row justify-content-center"
+      style="display: flex; justify-content: center"
+    >
+      <div class="container">
+        <!-- Header Section -->
+        <div class="header-flex">
+          <div><strong>No HP:</strong> {{ pengguna.phone }}</div>
+          <div><strong>Saldo:</strong> {{ pengguna.saldo }}</div>
+          <div>
+            <a href="{% url 'transaksi_user_mypay' %}">
+              <button class="btn">Lakukan Transaksi</button>
+            </a>
+          </div>
+        </div>
+
+        <!-- Riwayat Transaksi Section -->
+        <div class="rounded-rectangle">
+          <h2>Riwayat Transaksi</h2>
+          {% for transaction in transactions %}
+          <div class="transaction-item">
+            <div class="transaction-amount">{{ transaction.amount }}</div>
+            <div class="transaction-date">{{ transaction.created_at }}</div>
+            <div class="transaction-type">{{ transaction.category }}</div>
+          </div>
+          {% empty %}
+          <p>No transactions yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+{% endblock content %}

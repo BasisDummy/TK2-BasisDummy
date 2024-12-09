@@ -1,0 +1,140 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Worker</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+</head>
+
+<body>
+    <div class="navbar-container">
+        <div class="navbar">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home_worker' %}">Homepage</a></li>
+                    <li><a href="{% url 'kelola_pekerjaan_worker' %}">Kelola Pekerjaan Saya</a></li>
+                    <li><a href="{% url 'kelola_status_pekerjaan' %}">Kelola Status Pekerjaan</a></li>
+                    <li><a href="{% url 'my_pay_worker' %}">MyPay</a></li>
+                    <li><a href="{% url 'worker_profile' %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <h1 class="text-2xl font-bold text-center my-6">Daftar Pekerjaan Anda</h1>
+
+    <div class="max-w-5xl mx-auto px-4">
+        <!-- Filter dan Search -->
+        <form method="GET" class="flex items-center gap-4 mb-6">
+            <!-- Filter Subkategori -->
+            <select name="kategori" id="kategori"
+                class="w-1/4 p-2 border rounded-md focus:outline-none focus:ring focus:border-[#969b4a]">
+                <option value="">Pilih Kategori</option>
+                {% for kategori in categories %}
+                <option value="{{ kategori.id }}">{{ kategori.name }}</option>
+                {% endfor %}
+            </select>
+
+            <!-- Filter Status -->
+            <select id="subkategori" name="subkategori"
+                class="w-1/4 p-2 border rounded-md focus:outline-none focus:ring focus:border-[#969b4a]">
+                <option value="">Pilih Subkategori</option>
+            </select>
+
+            <!-- Tombol Submit -->
+            <button type="submit" class="px-4 py-2 text-white bg-[#969b4a] rounded-md hover:bg-[#7a7e37]">
+                Search
+            </button>
+        </form>
+
+        <!-- Tabel Pesanan -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead class="rounded rounded-t-lg bg-[#C8CC7D] text-black">
+                        <tr class="rounded-t-lg">
+                            <th class="p-4 text-center rounded-tl-lg">Subkategori Pesanan</th>
+                            <th class="p-4 text-center">Nama pelanggan</th>
+                            <th class="p-4 text-center">Tanggal Pemesanan</th>
+                            <th class="p-4 text-center">Sesi</th>
+                            <th class="p-4 text-center">Total Biaya</th>
+                            <th class="p-4 text-center rounded-tr-lg">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr class="hover-effect" data-subkategori="{{ order.service.sub_category.id }}">
+                            <td class="p-4 text-center border-t">
+                                {{ order.service.sub_category.name }}
+                            </td>
+                            <td class="p-4 text-center border-t">{{ order.user.name }}</td>
+                            <td class="p-4 text-center border-t">20-12-2023</td>
+
+                            <td class="p-4 text-center border-t">{{ order.service.name }}</td>
+                            <td class="p-4 text-center border-t">Rp {{ order.total_price }}</td>
+                            <td class=""><a href="{% url 'kerjakan_service' order.id %}"
+                                    class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Kerjakan
+                                    Pesanan</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="p-4 text-center text-gray-500">Belum ada pesanan yang ditemukan.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#kategori').change(function () {
+                let kategoriId = $(this).val();
+                $('#subkategori').empty();
+                $('#subkategori').append('<option value="">Pilih Subkategori</option>');
+
+                if (kategoriId) {
+                    $.ajax({
+                        url: '/myapp/api/subkategori/' + kategoriId,
+                        method: 'GET',
+                        success: function (data) {
+                            data.forEach(function (subkategori) {
+                                $('#subkategori').append('<option value="' + subkategori.id + '">' + subkategori.name + '</option>');
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('form').on('submit', function (e) {
+                e.preventDefault(); // Hindari reload halaman
+
+                const kategoriId = $('#kategori').val();
+                const subkategoriId = $('#subkategori').val();
+
+                // Sembunyikan semua baris
+                $('table tbody tr').hide();
+
+                // Tampilkan baris yang sesuai filter
+                $('table tbody tr').filter(function () {
+                    // const rowKategori = $(this).data('kategori'); // Pastikan data-kategori ada di elemen <tr>
+                    const rowSubkategori = $(this).data('subkategori'); // Pastikan data-subkategori ada di elemen <tr>
+
+                    return rowSubkategori == subkategoriId || !subkategoriId;
+                }).show();
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+{% endblock content %}

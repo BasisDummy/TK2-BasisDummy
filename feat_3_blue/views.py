@@ -217,7 +217,7 @@ def beli_voucher(request, voucher_id):
     from datetime import datetime, timedelta
 
     # Hardcode saldo pengguna
-    saldo_pengguna = 5000  # Rp 5.000, contoh saldo
+    saldo_pengguna = 500000  # Rp 5.000, contoh saldo
     voucher = next((v for v in voucher_data if v["id"] == voucher_id), None)
     
     if voucher:

@@ -1,0 +1,187 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Worker</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  </head>
+  <body>
+    <div class="navbar-container">
+      <div class="navbar">
+        <nav>
+          <ul>
+            <li><a href="{% url 'home_user' %}">Homepage</a></li>
+            <li><a href="{% url 'my_app' %}">MyPay</a></li>
+            <li>
+              <a href="{% url 'kelola_pesanan' %}">Kelola Pesanan Saya</a>
+            </li>
+            <li><a href="{% url 'daftar_diskon' %}">Diskon</a></li>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div
+      class="row justify-content-center mt-5"
+      style="display: flex; justify-content: center"
+    >
+      <div class="container">
+        <h2 class="text-2xl font-semibold mb-4">Diskon</h2>
+
+        <!-- Daftar Voucher -->
+        <h3 class="text-xl font-semibold">Voucher</h3>
+        <div class="border rounded p-4 mb-4">
+          <table class="w-full border-collapse border border-[#c8cc7d]">
+            <thead class="bg-[#C8CC7D]">
+              <tr>
+                <th class="border border-[#c8cc7d] p-2">Kode</th>
+                <th class="border border-[#c8cc7d] p-2">Potongan</th>
+                <th class="border border-[#c8cc7d] p-2">
+                  Min Transaksi Pemesanan
+                </th>
+                <th class="border border-[#c8cc7d] p-2">Jumlah Hari Berlaku</th>
+                <th class="border border-[#c8cc7d] p-2">Kuota Penggunaan</th>
+                <th class="border border-[#c8cc7d] p-2">Harga</th>
+                <th class="border border-[#c8cc7d] p-2">Beli</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for voucher in vouchers %}
+              <tr>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                  {{ voucher.code }}
+                </td>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                  {{ voucher.percentage }}%
+                </td>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                  {{ voucher.min_transaction }}
+                </td>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                  {{ voucher.max_usage }}
+                </td>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                  {{ voucher.usage_quota }}
+                </td>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                  {{ voucher.voucher_price }}
+                </td>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                  <button
+                    onclick="beliVoucher({{ voucher.id }})"
+                    class="bg-[#969b4a] text-white px-4 py-2 rounded hover:bg-[#646733]"
+                  >
+                    Beli
+                  </button>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="border border-[#c8cc7d] p-2 text-center">
+                  Tidak ada voucher yang tersedia.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Daftar Promo -->
+        <h3 class="text-xl font-semibold">Promo</h3>
+        <div class="border rounded p-4">
+          <table class="w-full border-collapse border border-[#c8cc7d]">
+            <thead class="bg-[#C8CC7D]">
+              <tr>
+                <th class="border border-[#c8cc7d] p-2">Kode</th>
+                <th class="border border-[#c8cc7d] p-2">
+                  Tanggal Akhir Berlaku
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for promo in promos %}
+              <tr>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                  {{ promo.code }}
+                </td>
+                <td class="border border-[#c8cc7d] p-2 text-center">
+                  {{ promo.expired_date }}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="2" class="border border-[#c8cc7d] p-2 text-center">
+                  Tidak ada promo yang tersedia.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Modal Notifikasi -->
+        <div
+          id="modal"
+          class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden"
+        >
+          <div
+            class="bg-white p-6 rounded shadow-lg w-96 text-center border border-gray-300"
+          >
+            <h3 id="modal-title" class="text-xl font-bold mb-4"></h3>
+            <p id="modal-message" class="mb-6"></p>
+            <button
+              onclick="closeModal()"
+              class="px-4 py-2 border border-gray-500 rounded hover:bg-gray-100"
+            >
+              Tutup
+            </button>
+          </div>
+        </div>
+
+        <script>
+          function beliVoucher(voucherId) {
+            fetch(`/myapp/home/beli-diskon/${voucherId}`, {
+              method: "POST",
+              headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json",
+              },
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.status === "success") {
+                  showModal(
+                    "SUKSES",
+                    `Selamat! Anda berhasil membeli voucher kode ${data.code}. Voucher ini akan berlaku hingga tanggal ${data.expiry_date} dengan kuota penggunaan sebanyak ${data.quota} kali.`
+                  );
+                } else {
+                  showModal("GAGAL", data.message);
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                showModal("GAGAL", "Terjadi kesalahan pada server.");
+              });
+          }
+
+          function showModal(title, message) {
+            document.getElementById("modal-title").textContent = title;
+            document.getElementById("modal-message").textContent = message;
+            document.getElementById("modal").classList.remove("hidden");
+          }
+
+          function closeModal() {
+            document.getElementById("modal").classList.add("hidden");
+          }
+        </script>
+      </div>
+    </div>
+  </body>
+</html>
+
+{% endblock content %}

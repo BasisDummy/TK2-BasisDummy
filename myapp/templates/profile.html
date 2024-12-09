@@ -1,0 +1,231 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home User</title>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  <style>
+    body {
+      background-color: rgba(150, 155, 74, 0.2);
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 1200px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .data-section {
+      flex: 1;
+      margin: 0 10px;
+    }
+
+    .data-section h3 {
+      background-color: #C8CC7D;
+      padding: 10px;
+      border-radius: 8px;
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .data {
+      margin-bottom: 15px;
+    }
+
+    .data label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .data span {
+      display: block;
+      padding: 5px;
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .button {
+      display: inline;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: #969b4a;
+    }
+
+    .button:hover {
+      background-color: #646733;
+    }
+
+    .photo-box {
+      position: absolute;
+      top: 100px;
+      right: 20px;
+      width: 100px;
+      height: 100px;
+      background: #ccc;
+      border: 2px solid #333;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .photo-box span {
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="navbar-container">
+    <div class="navbar">
+      <nav>
+        <ul>
+          {% if role == "user" %}
+          <li><a href="{% url 'home_user' %}">Homepage</a></li>
+          <li><a href="{% url 'my_app' %}">MyPay</a></li>
+          <li>
+            <a href="{% url 'kelola_pesanan' %}">Kelola Pesanan Saya</a>
+          </li>
+          <li><a href="{% url 'daftar_diskon' %}">Diskon</a></li>
+          <li><a href="{% url 'profile' %}">Profile</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'home_worker' %}">Homepage</a></li>
+          <li><a href="{% url 'kelola_pekerjaan_worker' %}">Kelola Pekerjaan Saya</a></li>
+          <li><a href="{% url 'kelola_status_pekerjaan' %}">Kelola Status Pekerjaan</a></li>
+          <li><a href="{% url 'my_pay_worker' %}">MyPay</a></li>
+          <li><a href="{% url 'worker_profile' %}">Profile</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% endif %}
+
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div class="container">
+
+
+
+    {% if role == "user" %}
+    <!-- Data Pengguna -->
+    <div class="data-section">
+      <h3>Data Pengguna</h3>
+      <div class="data">
+        <label>Nama:</label>
+        <span>{{ user.name }}</span>
+      </div>
+      <div class="data">
+        <label>Level:</label>
+        <span>{{ role }}</span>
+      </div>
+      <div class="data">
+        <label>Jenis Kelamin:</label>
+        <span>{{ user.gender }}</span>
+      </div>
+      <div class="data">
+        <label>No HP:</label>
+        <span>{{ user.phone }}</span>
+      </div>
+      <div class="data">
+        <label>Tanggal Lahir:</label>
+        <span>{{ user.date }}</span>
+      </div>
+      <div class="data">
+        <label>Alamat:</label>
+        <span>{{ user.address }}</span>
+      </div>
+      <div class="data">
+        <label>Saldo MyPay:</label>
+        <span>Rp {{ user.saldo }}</span>
+      </div>
+      <a class="button" href="{% url 'update_profile' %}">Update</a>
+    </div>
+
+    {% else %}
+    <!-- Data Pekerja -->
+    <div class="data-section">
+      <h3>Data Pekerja</h3>
+      <div class="photo-box">
+        <span>Foto</span>
+      </div>
+      <div class="data">
+        <label>Nama:</label>
+        <span>{{ worker.name }}</span>
+      </div>
+      <div class="data">
+        <label>Jenis Kelamin:</label>
+        <span>{{ worker.gender }}</span>
+      </div>
+      <div class="data">
+        <label>No HP:</label>
+        <span>{{ worker.phone }}</span>
+      </div>
+      <div class="data">
+        <label>Tanggal Lahir:</label>
+        <span>{{ worker.dob }}</span>
+      </div>
+      <div class="data">
+        <label>Alamat:</label>
+        <span>{{ worker.address }}</span>
+      </div>
+      <div class="data">
+        <label>Saldo MyPay:</label>
+        <span>Rp {{ worker.saldo }}</span>
+      </div>
+      <div class="data">
+        <label>Nama Bank:</label>
+        <span>{{ worker.bank_name }}</span>
+      </div>
+      <div class="data">
+        <label>No Rekening:</label>
+        <span>{{ worker.account_number }}</span>
+      </div>
+      <div class="data">
+        <label>NPWP:</label>
+        <span>{{ worker.npwp }}</span>
+      </div>
+      <div class="data">
+        <label>Rating:</label>
+        <span>{{ rating }}</span>
+      </div>
+      <div class="data">
+        <label>Jumlah Pesanan Selesai:</label>
+        <span>{{ order_done }}</span>
+      </div>
+      <div class="data">
+        <label>Kategori Pekerjaan:</label>
+        <span>
+          {% for category in categories %}
+            {{ category.name }} <br>
+          {% endfor %}
+        </span>
+      </div>
+      <a class="button" href="{% url 'update_profile' %}">Update</a>
+    </div>
+    {% endif %}
+  </div>
+</body>
+
+</html>
+
+{% endblock content %}

@@ -1,0 +1,128 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Worker</title>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+</head>
+
+<body class="bg-white text-gray-900">
+  <div class="navbar-container">
+    <div class="navbar">
+      <nav>
+        <ul>
+          {% if role == "User" %}
+          <li><a href="{% url 'home_user' %}">Homepage</a></li>
+          <li><a href="{% url 'my_app' %}">MyPay</a></li>
+          <li>
+            <a href="{% url 'kelola_pesanan' %}">Kelola Pesanan Saya</a>
+          </li>
+          <li><a href="{% url 'daftar_diskon' %}">Diskon</a></li>
+          <li><a href="{% url 'profile' %}">Profile</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'home_worker' %}">Homepage</a></li>
+          <li><a href="{% url 'kelola_pekerjaan_worker' %}">Kelola Pekerjaan Saya</a></li>
+          <li><a href="{% url 'kelola_status_pekerjaan' %}">Kelola Status Pekerjaan</a></li>
+          <li><a href="{% url 'my_pay_worker' %}">MyPay</a></li>
+          <li><a href="{% url 'worker_profile' %}">Profile</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div class="container mx-auto p-6">
+    <div class="mb-4">
+      <div class="text-2xl font-bold mb-2">{{ subcategory.category }}</div>
+      <div class="text-lg font-semibold mb-2">{{ subcategory.name }}</div>
+    </div>
+
+    <!-- Konten Utama -->
+    <div class="description-box mb-6 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
+      <p class="text-sm">{{ subcategory.description }}</p>
+    </div>
+
+    <!-- Layout Sampingan untuk Session Box dan Worker Box -->
+    <div class="flex flex-col lg:flex-row gap-6 mb-6">
+      <!-- Session Box -->
+      <div class="session-box flex-1 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
+        <h3 class="text-xl font-semibold mb-4">Pilihan Sesi Layanan</h3>
+        {% for session in services %}
+        <div class="session flex justify-between items-center border-b border-gray-200 py-2">
+          <span class="text-sm">{{ session.name }}</span>
+          <span class="text-sm">{{ session.amount }}</span>
+          {% if role == "User" %}
+          <span class="text-sm">
+            <a href="{% url 'pesanan' session.id %}"
+              class="px-4 py-2 bg-blue-500 text-white font-bold rounded">Pesan</a>
+          </span>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Worker Box -->
+      <div class="worker-box flex-1 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
+        <h3 class="text-xl font-semibold mb-4">Pekerja</h3>
+        <div class="workers grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {% for worker in workers %}
+          <div class="worker-card p-4 bg-gray-50 border border-gray-200 rounded-md shadow-sm">
+            <p class="worker-name font-semibold text-gray-800 text-center">
+              {{ worker.name }}
+            </p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-end mb-4">
+      {% if role == "Worker" %}
+      {% if is_join %}
+      <span class="btr-order px-4 py-2 bg-[#b6b983] text-white rounded-lg hover:bg-[#646733] focus:outline-none">
+        Sudah Bergabung
+      </span>
+      {% else %}
+      <a href="{% url 'join_service' subcategory.id %}" id="joinButton"
+        class="btn-order px-4 py-2 bg-[#969b4a] text-white rounded-lg hover:bg-[#646733] focus:outline-none">
+        Bergabung untuk Bekerja
+      </a>
+      {% endif %}
+      {% endif %}
+    </div>
+    <!-- Testimonial Box -->
+    <div class="testimonial-box mb-6 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
+      <h3 class="text-xl font-semibold mb-4">Testimoni</h3>
+      <div class="testimonials grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for testimonial in testimonials %}
+        <div class="testimonial-card p-4 bg-gray-50 border border-gray-200 rounded-md shadow-sm">
+          <div class="flex justify-between items-center mb-2">
+            <p class="font-bold text-gray-800">{{ testimonial.user }}</p>
+            <p class="text-sm text-gray-500">{{ testimonial.date }}</p>
+          </div>
+          <p class="text-sm text-gray-600 mb-2">{{ testimonial.text }}</p>
+          <p class="text-sm">Pekerja: {{ testimonial.worker }}</p>
+          <p class="text-sm">Rating: {{ testimonial.rating }}/5</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <script>
+    const isWorkerJoined = false; // Ganti nilai ini sesuai dengan kondisi login atau data server
+    const joinButton = document.getElementById("joinButton");
+
+    if (isWorkerJoined) {
+      joinButton.classList.add("hidden");
+    }
+
+    joinButton.addEventListener("click", function () {
+      alert("Anda telah bergabung dalam kategori jasa ini!");
+      joinButton.classList.add("hidden");
+    });
+  </script>
+</body>
+
+{% endblock content %}

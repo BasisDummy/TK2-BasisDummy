@@ -1,0 +1,190 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home User</title>
+  <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+</head>
+
+<body>
+  <div class="navbar-container">
+    <div class="navbar">
+      <nav>
+        <ul>
+          {% if role == "user" %}
+          <li><a href="{% url 'home_user' %}">Homepage</a></li>
+          <li><a href="{% url 'my_app' %}">MyPay</a></li>
+          <li>
+            <a href="{% url 'kelola_pesanan' %}">Kelola Pesanan Saya</a>
+          </li>
+          <li><a href="{% url 'daftar_diskon' %}">Diskon</a></li>
+          <li><a href="{% url 'profile' %}">Profile</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% else %}
+          <li><a href="{% url 'home_worker' %}">Homepage</a></li>
+          <li><a href="{% url 'kelola_pekerjaan_worker' %}">Kelola Pekerjaan Saya</a></li>
+          <li><a href="{% url 'kelola_status_pekerjaan' %}">Kelola Status Pekerjaan</a></li>
+          <li><a href="{% url 'my_pay_worker' %}">MyPay</a></li>
+          <li><a href="{% url 'worker_profile' %}">Profile</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+          {% endif %}
+
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div class="row justify-content-center" style="display: flex; justify-content: center">
+    <div class="container">
+      <div class="rounded-rectangle">
+        <!-- Form Header -->
+        <div class="kategori-jasa-header">
+          <h2>Form - Pengguna</h2>
+        </div>
+
+        <!-- User Details -->
+        <div style="text-align: center; margin-top: 20px">
+          <p><strong>Nama User:</strong> {{ form.nama_user }}</p>
+          <p>
+            <strong>Tanggal Transaksi:</strong> {{ form.tanggal_transaksi }}
+          </p>
+          <p><strong>Saldo User:</strong> {{ form.saldo_user }}</p>
+        </div>
+
+        <!-- Transaction Form -->
+        <form method="POST" action="{% url 'transaksi_user_mypay' %}">
+          {% csrf_token %}
+          <!-- Kategori Transaksi Dropdown -->
+          <div style="text-align: center; margin-top: 20px">
+            <div class="py-5">
+              {% if messages %}
+              <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                  {{ message }}
+                </div>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+            <label for="kategori_transaksi"><strong>Kategori Transaksi:</strong></label>
+            <select id="kategori_transaksi" name="kategori_transaksi" onchange="showStateForm()" required>
+              <option value="">-- Pilih Kategori --</option>
+              {% for kategori in form.kategori_transaksi %}
+              <option value="{{ kategori }}">{{ kategori }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- State Form -->
+          <div id="state_form" class="state-form" style="margin-top: 20px">
+            <!-- Dynamic content based on dropdown selection -->
+          </div>
+        </form>
+      </div>
+
+      <script>
+        function loadPendingOrders() {
+          // URL untuk mengambil data pesanan
+          const url = `/myapp/user/pending-orders`;
+
+          // Mengambil data pesanan menggunakan fetch
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              // Mengambil elemen di DOM untuk menampilkan data
+              const stateForm = document.getElementById("state_form");
+
+              // Mengecek apakah ada pesanan yang menunggu pembayaran
+              if (data.orders && data.orders.length > 0) {
+                let ordersHtml = `
+                    <label for="pesanan_jasa"><strong>Pesanan Jasa:</strong></label><br>
+                    <select id="pesanan_jasa" name="pesanan_jasa" required>
+                        <option value="">-- Pilih Pesanan Jasa --</option>
+                `;
+
+                // Loop melalui pesanan dan menambahkan opsi ke dropdown
+                data.orders.forEach((order) => {
+                  ordersHtml += `
+                        <option value="${order.id}">
+                            ${order.service} - ${order.total_price}
+                        </option>
+                    `;
+                });
+
+                ordersHtml += `</select><br><br><button type="submit" class="btn">Bayar</button>`;
+
+                // Menambahkan HTML ke dalam stateForm
+                stateForm.innerHTML = ordersHtml;
+              } else {
+                stateForm.innerHTML =
+                  "<p>Tidak ada pesanan yang menunggu pembayaran.</p>";
+              }
+            })
+            .catch((error) => {
+              console.error("Error fetching orders:", error);
+              stateForm.innerHTML = "<p>Error loading orders.</p>";
+            });
+        }
+
+        function showStateForm() {
+          var kategori = document.getElementById("kategori_transaksi").value;
+          console.log("Selected Kategori:", kategori); // Debugging line
+          var stateForm = document.getElementById("state_form");
+          stateForm.innerHTML = ""; // Clear previous content
+
+          if (kategori === "TOP UP MY PAY") {
+            stateForm.innerHTML = `
+                <label for="nominal"><strong>Nominal:</strong></label><br>
+                <input type="number" id="nominal" name="nominal" required><br><br>
+                <button type="submit" class="btn">Top Up</button>
+            `;
+          } else if (kategori === "MEMBAYAR TRANSAKSI") {
+            //   stateForm.innerHTML = `
+            //     <label for="pesanan_jasa"><strong>Pesanan Jasa:</strong></label><br>
+            //     <select id="pesanan_jasa" name="pesanan_jasa" required>
+            //         <option value="">-- Pilih Pesanan Jasa --</option>
+            //         <option value="Jasa 1 - Rp 200.000">Jasa 1 - Rp 200.000</option>
+            //         <option value="Jasa 2 - Rp 300.000">Jasa 2 - Rp 300.000</option>
+            //     </select><br><br>
+            //     <button type="submit" class="btn">Bayar</button>
+            // `;
+            loadPendingOrders();
+          } else if (kategori === "TRANSFER MYPAY") {
+            stateForm.innerHTML = `
+                <label for="no_hp"><strong>No HP Tujuan:</strong></label><br>
+                <input type="text" id="no_hp" name="no_hp" required><br><br>
+                <label for="nominal_transfer"><strong>Nominal:</strong></label><br>
+                <input type="number" id="nominal_transfer" name="nominal_transfer" required><br><br>
+                <button type="submit" class="btn">Transfer</button>
+            `;
+          } else if (kategori === "WITHDRAWAL") {
+            stateForm.innerHTML = `
+                <label for="nama_bank"><strong>Nama Bank:</strong></label><br>
+                <select id="nama_bank" name="nama_bank" required>
+                    <option value="">-- Pilih Nama Bank --</option>
+                    <option value="GoPay">GoPay</option>
+                    <option value="OVO">OVO</option>
+                    <option value="Virtual Account BCA">Virtual Account BCA</option>
+                    <option value="Virtual Account BNI">Virtual Account BNI</option>
+                    <option value="Virtual Account Mandiri">Virtual Account Mandiri</option>
+                </select><br><br>
+                <label for="no_rekening"><strong>No Rekening:</strong></label><br>
+                <input type="text" id="no_rekening" name="no_rekening" required><br><br>
+                <label for="nominal_withdrawal"><strong>Nominal:</strong></label><br>
+                <input type="number" id="nominal_withdrawal" name="nominal_withdrawal" required><br><br>
+                <button type="submit" class="btn">Withdraw</button>
+            `;
+          }
+        }
+      </script>
+    </div>
+  </div>
+</body>
+
+</html>
+
+{% endblock content %}

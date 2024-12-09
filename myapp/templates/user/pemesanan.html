@@ -1,0 +1,212 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home User</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+  </head>
+  <body>
+    <div class="navbar-container">
+      <div class="navbar">
+        <nav>
+          <ul>
+            <li><a href="{% url 'home_user' %}">Homepage</a></li>
+            <li><a href="{% url 'my_app' %}">MyPay</a></li>
+            <li>
+              <a href="{% url 'kelola_pesanan' %}">Kelola Pesanan Saya</a>
+            </li>
+            <li><a href="{% url 'daftar_diskon' %}">Diskon</a></li>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div
+      class="mt-16 min-h-screen px-4"
+      style="background-color: rgba(150, 155, 74, 0.2); padding: 20px"
+    >
+         <!-- Bagian Pesan -->
+         {% if messages %}
+         <div class="messages">
+             {% for message in messages %}
+                 <div class="alert alert-{{ message.tags }}">
+                     {{ message }}
+                 </div>
+             {% endfor %}
+         </div>
+     {% endif %}
+      <div
+        id="order-form"
+        class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md"
+      >
+        <h2 class="text-xl font-bold mb-6 text-center">Pesan Jasa</h2>
+        <form
+          method="POST"
+          id="order-form"
+          action="{% url 'pesanan' service.id %}"
+        >
+          {% csrf_token %}
+
+          <!-- Tanggal Pemesanan -->
+          <div class="mb-4">
+            <label class="block text-gray-700 mb-2">Tanggal Pemesanan:</label>
+            <input
+              id="order-date"
+              type="text"
+              readonly
+              name="tanggal"
+              class="w-full p-2 border rounded-md bg-gray-100"
+            />
+            <input type="hidden" name="id" value="{{ service.id }}" />
+          </div>
+
+          <!-- Kode Diskon -->
+          <div class="mb-4">
+            <label class="block text-gray-700 mb-2">Diskon:</label>
+            <input
+              id="discount-code"
+              type="text"
+              placeholder="Kode Diskon"
+              name="diskon"
+              class="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-[#969b4a]"
+            />
+            <p id="text-diskon" class="text-red-500"></p>
+          </div>
+
+          <!-- Total Pembayaran -->
+          <div class="mb-4">
+            <label class="block text-gray-700 mb-2">Total Pembayaran:</label>
+            <p id="total-payment" class="text-lg font-semibold text-gray-800">
+              Rp 0,00
+            </p>
+            <input type="hidden" name="amount" id="total" />
+          </div>
+
+          <!-- Metode Pembayaran -->
+          <div class="mb-4">
+            <label class="block text-gray-700 mb-2">Metode Pembayaran:</label>
+            <select
+              id="payment-method"
+              class="w-full p-2 border rounded-md focus:outline-none focus:ring focus:border-[#969b4a]"
+            >
+              <option>Pilih Metode</option>
+              <option>Transfer Bank</option>
+              <option>Gopay</option>
+              <option>OVO</option>
+            </select>
+          </div>
+
+          <!-- Tombol Pesan Jasa -->
+          <button
+            id="submit-order"
+            class="block w-full py-2 text-center bg-[#969b4a] text-white rounded-md hover:bg-[#646733] focus:outline-none focus:ring focus:ring-[#969b4a]"
+          >
+            Pesan
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+       async function getPromoAndVoucher() {
+            try {
+                const response = await fetch('{% url "get_voucher_and_promo" %}');
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                return data
+
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+                return null;
+            }
+        }
+
+        function getDiscount(discounts, codes){
+          console.log(discounts)
+          return discounts.filter(discount => {
+            return discount.code == codes
+          })
+        }
+      document.addEventListener("DOMContentLoaded", function () {
+        getPromoAndVoucher().then((value) => {
+          discounts = value.discount
+          console.log(discounts)
+          
+          const initialTotalPayment = "{{ service.amount }}"; // Rp 150.000,00
+          const discountCodes = {
+            DISKON10: 0.1, // 10% diskon
+            DISKON20: 0.2, // 20% diskon
+          };
+    
+          // Mengisi tanggal pemesanan dengan tanggal hari ini
+          const orderDateInput = document.getElementById("order-date");
+          const today = new Date().toISOString().split("T")[0];
+          orderDateInput.value = today;
+    
+          // Mengambil elemen total pembayaran
+          const totalPaymentElement = document.getElementById("total-payment");
+          const total = document.getElementById("total");
+          const discountCodeInput = document.getElementById("discount-code");
+    
+          total.value = initialTotalPayment;
+    
+          // Menghitung total pembayaran awal
+          let totalPayment = initialTotalPayment;
+          totalPaymentElement.textContent = `Rp ${totalPayment.toLocaleString(
+            "id-ID"
+          )}`;
+    
+          // Fungsi untuk mengupdate total pembayaran saat kode diskon dimasukkan
+          discountCodeInput.addEventListener("input", () => {
+            const discountCode = discountCodeInput.value.toUpperCase();
+            let discount = getDiscount(discounts, discountCode).length == 0 ? 0 : parseInt(getDiscount(discounts, discountCode)[0]["percentage"]) / 100
+            const textDiskon = document.getElementById("text-diskon")
+            if(discount == 0){
+              textDiskon.innerText = "Voucher tidak tersedia (tidak wajib di isi)"
+            }else{
+              textDiskon.innerText = ""
+            }
+            // const discount = discountCodes[discountCode] || 0;
+            const discountedTotal = initialTotalPayment * (1 - discount);
+    
+            totalPayment = discountedTotal;
+            totalPaymentElement.textContent = `Rp ${totalPayment.toLocaleString(
+              "id-ID"
+            )}`;
+            total.value = totalPayment;
+          });
+    
+          // Handler untuk tombol 'Pesan Jasa'
+          document
+            .getElementById("submit-order")
+            .addEventListener("click", (event) => {
+              const paymentMethod = document.getElementById("payment-method").value;
+    
+              if (paymentMethod === "Pilih Metode") {
+                alert("Silakan pilih metode pembayaran.");
+                return;
+              }
+    
+              z;
+              // Submit form (if you want to actually submit it after handling)
+              document.getElementById("order-form").submit();
+            });
+          });
+        })
+         // Data total pembayaran (misalnya dari database)
+     
+    </script>
+  </body>
+</html>
+
+{% endblock content %}

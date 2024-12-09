@@ -1,0 +1,190 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Status Pekerjaan</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}" />
+</head>
+
+<body>
+    <div class="navbar-container">
+        <div class="navbar">
+            <nav>
+                <ul>
+                    <li><a href="{% url 'home_worker' %}">Homepage</a></li>
+                    <li><a href="{% url 'kelola_pekerjaan_worker' %}">Kelola Pekerjaan Saya</a></li>
+                    <li><a href="{% url 'kelola_status_pekerjaan' %}">Kelola Status Pekerjaan</a></li>
+                    <li><a href="{% url 'my_pay_worker' %}">MyPay</a></li>
+
+                    <li><a href="{% url 'worker_profile' %}">Profile</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <h1 class="text-2xl font-bold text-center my-6">Daftar Pekerjaan Anda</h1>
+
+    <div class="max-w-5xl mx-auto px-4">
+        <!-- Filter dan Search -->
+        <form method="GET" class="flex items-center gap-4 mb-6">
+            <!-- Filter Subkategori -->
+            <input type="text" id="nama-jasa" placeholder="Nama Jasa"
+                class="w-full md:w-1/3 border border-gray-300 rounded-md" />
+            <!-- Filter Status -->
+            <select id="status-pesanan" name="status-pesanan"
+                class="w-1/4 p-2 py-2.5 border rounded-md focus:outline-none focus:ring focus:border-[#969b4a]">
+                <option value="">Semua Status</option>
+                <option value="awaiting_payment">Menunggu Pembayaran</option>
+                <option value="in_progress">Sedang Dikerjakan</option>
+                <option value="completed">Selesai</option>
+                <option value="ARRIVE_WORKER">Tiba Dilokasi</option>
+            </select>
+
+
+            <!-- Tombol Submit -->
+            <button type="submit" class="px-4 py-2 text-white bg-[#969b4a] rounded-md hover:bg-[#7a7e37]">
+                Search
+            </button>
+        </form>
+
+        <!-- Tabel Pesanan -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead class="rounded rounded-t-lg bg-[#C8CC7D] text-black">
+                        <tr class="rounded-t-lg">
+                            <th class="p-4 text-center rounded-tl-lg">Subkategori Pesanan</th>
+                            <th class="p-4 text-center">Nama pelanggan</th>
+                            <th class="p-4 text-center">Tanggal Pemesanan</th>
+                            <th class="p-4 text-center">Sesi</th>
+                            <th class="p-4 text-center">Total Biaya</th>
+                            <th class="p-4 text-center rounded-tr-lg">Status Pesanan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-table">
+                        {% for order in orders %}
+                        <tr class="hover-effect" data-nama-jasa="{{ order.service.name|lower }}"
+                            data-status="{{ order.status|lower }}">
+                            <td class="p-4 text-center border-t">
+                                {{ order.service.sub_category.name }}
+                            </td>
+                            <td class="p-4 text-center border-t">{{ order.user.name }}</td>
+                            <td class="p-4 text-center border-t">20-12-2023</td>
+
+                            <td class="p-4 text-center border-t">{{ order.service.name }}</td>
+                            <td class="p-4 text-center border-t">Rp {{ order.total_price }}</td>
+                            <td class="">
+                                {% if order.status != 'COMPLETED' %}
+
+                                <a href="{% url 'update_service' order.id %}"
+                                    class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                                    {% if order.status == 'ARRIVE_WORKER' %}
+                                    Melakukan Pekerjaan
+                                    {% elif order.status == 'IN_PROGRESS' %}
+                                    Selesai Pekerjaan
+                                    {% elif order.status == 'WAITING_WORKER' %}
+                                    Tiba Dilokasi
+                                    {% endif %}
+                                </a>
+                                {% else %}
+                                <span class="bg-white">Selesai</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="p-4 text-center text-gray-500">Belum ada pesanan yang ditemukan.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <!-- <tbody>
+                        {% for order in orders %}
+                            <tr class="hover-effect">
+                                <td class="p-4 text-center border-t">{{ order.service.SubJobCategory.name }}</td>
+                                <td class="p-4 text-center border-t">{{ order.service.name }}</td>
+                                <td class="p-4 text-center border-t">{{ order.total_price }}</td>
+                                <td class="p-4 text-center border-t">{{ order.worker }}</td>
+                                <td class="p-4 text-center border-t">
+                                    {% if order.status == "AWAITING_PAYMENT" %}
+                                        <span class="text-yellow-600">Menunggu Pembayaran</span>
+                                    {% elif order.status == "SEARCHING_WORKER" %}
+                                        <span class="text-green-600">Mencari Pekerja Terdekat</span>
+                                    {% elif order.status == "WORKER_FOUND" %}
+                                        <span class="text-yellow-600">Pekerja ditemukan</span>
+                                    {% elif order.status == "IN_PROGRESS" %}
+                                        <span class="text-yellow-600">Sedang Dikerjakan</span>
+                                    {% elif order.status == COMPLETED %}
+                                        <span class="text-red-600">Selesai</span>
+                                    {% elif order.status == "SEARCHING_WORKER" %}
+                                        <span class="text-red-600">Mencari Pekerja Terdekat</span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-4 text-center border-t">
+                                    {% if order.status == "AWAITING_PAYMENT" or order.status == "SEARCHING_WORKER" %}
+                                        <button class="w-32 px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700">Batalkan</button>
+                                    {% elif order.status == COMPLETED %}
+                                    <a href="{% url 'feat_3_blue:buat_testimoni' order.id %}" class="w-32 px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">Buat Testimoni</a>
+                                    {% else %}
+                                        <span class="text-gray-500">Tidak Ada Aksi</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="p-4 text-center text-gray-500">Belum ada pesanan yang ditemukan.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody> -->
+                </table>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const namaJasaInput = document.getElementById("nama-jasa");
+            const statusSelect = document.getElementById("status-pesanan");
+            const tableRows = document.querySelectorAll("#order-table tr");
+
+            function filterTable() {
+                console.log("object")
+                const namaJasaValue = namaJasaInput.value.toLowerCase();
+                const statusValue = statusSelect.value.toLowerCase();
+
+                tableRows.forEach(row => {
+                    const namaJasa = row.getAttribute("data-nama-jasa");
+                    const status = row.getAttribute("data-status");
+
+
+                    console.log(row)
+                    // Cek apakah row sesuai dengan filter
+                    const matchesNamaJasa = namaJasa.includes(namaJasaValue);
+                    const matchesStatus = !statusValue || status === statusValue;
+
+                    // Tampilkan/hilangkan row berdasarkan kecocokan
+                    if (matchesNamaJasa && matchesStatus) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+
+            // Tambahkan event listener
+            namaJasaInput.addEventListener("input", filterTable);
+            statusSelect.addEventListener("change", filterTable);
+        });
+    </script>
+
+</body>
+
+</html>
+
+{% endblock content %}

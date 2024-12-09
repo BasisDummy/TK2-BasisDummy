@@ -8,7 +8,7 @@
 <body class="bg-white text-gray-900">
     <div class="container mx-auto p-6">
         <div class="mb-4">
-            <div class="text-2xl font-bold mb-2">{{ subcategory.category }}</div>
+            <div class="text-2xl font-bold mb-2">{{ subcategory.category }}  </div>
             <div class="text-lg font-semibold mb-2">{{ subcategory.name }}</div>
         </div>
 
@@ -21,11 +21,11 @@
         <div class="flex flex-col lg:flex-row gap-6 mb-6">
             <!-- Session Box -->
             <div class="session-box flex-1 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
-                <h3 class="text-xl font-semibold mb-4">Pilihan Sesi Layanan</h3>
-                {% for session in subcategory.sessions %}
+                <h3 class="text-xl font-semibold mb-4">Pilihan Sesi Layanan {{ subcategory.description }}</h3>
+                {% for service in services %}
                     <div class="session flex justify-between items-center border-b border-gray-200 py-2">
-                        <span class="text-sm">{{ session.name }}</span>
-                        <span class="text-sm">{{ session.price }}</span>
+                        <span class="text-sm">{{ service.name }}</span>
+                        <span class="text-sm">{{ service.price }}</span>
 
                     </div>
                 {% endfor %}
