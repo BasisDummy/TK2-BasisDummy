@@ -4,8 +4,8 @@
 {% block content %}
 {% include 'home_worker.html' %} 
 
-<div class="mt-16" style="background-color: rgba(150, 155, 74, 0.2); min-height: 80vh; padding: 20px;">
-<body class="bg-white text-gray-900">
+<body class="text-gray-900" style="background-color: rgba(150, 155, 74, 0.2);">
+
     <div class="container mx-auto p-6">
         <div class="mb-4">
             <div class="text-2xl font-bold mb-2">{{ subcategory.category }}</div>
@@ -35,9 +35,9 @@
             <div class="worker-box flex-1 p-4 bg-white border border-[#c8cc7d] rounded-md shadow-sm">
                 <h3 class="text-xl font-semibold mb-4">Pekerja</h3>
                 <div class="workers grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {% for worker in subcategory.workers %}
+                    {% for worker in subcategory.sessions %}
                         <div class="worker-card p-4 bg-gray-50 border border-gray-200 rounded-md shadow-sm">
-                            <p class="worker-name font-semibold text-gray-800 text-center">{{ worker.name }}</p>
+                            <p class="worker-name font-semibold text-gray-800 text-center">{{ worker.worker_name }}</p>
                         </div>
                     {% endfor %}
                 </div>
@@ -56,11 +56,11 @@
                 {% for testimonial in subcategory.testimonials %}
                 <div class="testimonial-card p-4 bg-gray-50 border border-gray-200 rounded-md shadow-sm">
                     <div class="flex justify-between items-center mb-2">
-                        <p class="font-bold text-gray-800">{{ testimonial.user }}</p>
+                        <p class="font-bold text-gray-800">{{ testimonial.customer_name }}</p>
                         <p class="text-sm text-gray-500">{{ testimonial.date }}</p>
                     </div>
                     <p class="text-sm text-gray-600 mb-2">{{ testimonial.text }}</p>
-                    <p class="text-sm">Pekerja: {{ testimonial.worker }}</p>
+                    <p class="text-sm">Pekerja: {{ testimonial.worker_name }}</p>
                     <p class="text-sm">Rating: {{ testimonial.rating }}/5</p>
                 </div>                
                 {% endfor %}
